@@ -10,7 +10,7 @@
             <Label Text="Решим судоку! :)" 
                    HorizontalTextAlignment="Center" 
                    TextColor="White" 
-                   FontSize="20"
+                   FontSize="25"
                    FontAttributes="Bold"/>
         </Frame>
 
