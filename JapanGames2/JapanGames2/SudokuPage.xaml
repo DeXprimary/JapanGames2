@@ -7,10 +7,10 @@
 
     <StackLayout BackgroundColor="#afcfff">
         <Frame BackgroundColor="#afcfff" Padding="0" CornerRadius="0">
-            <Label Text="Решим судоку! :)" 
+            <Label Text="Решим судоку!!! :)" 
                    HorizontalTextAlignment="Center" 
                    TextColor="White" 
-                   FontSize="25"
+                   FontSize="20"
                    FontAttributes="Bold"/>
         </Frame>
 
