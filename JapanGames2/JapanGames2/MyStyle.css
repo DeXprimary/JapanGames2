@@ -1,0 +1,22 @@
+﻿navigationpage {
+    -xf-bar-background-color: #dce3ee;
+    -xf-bar-font-color: #41558d;
+}
+
+.bgFilled {
+    background-color: #dce3ee;
+}
+
+.bgMarked {
+    background-color: #afcfff;
+}
+
+.mainMenuButton {
+    margin: 10;
+    height: 80;
+    width: 300;
+    font-size: 27;
+    color: #41558d;
+    border-radius: 5;
+}
+

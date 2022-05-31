@@ -5,7 +5,128 @@ using System.Text;
 namespace JapanGames2
 {
     public class MySudokuGrid
-    {
+    {		
+		//Реализация класса ячейки поля судоку
+		private class MySudokuCell : ICloneable
+		{
+			private byte countAvailableCandidates = 9;
+			internal byte CountAvailableCandidates
+			{
+				get => countAvailableCandidates;
+			}
+
+			private byte[] availableCandidates = new byte[9] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+			/*
+			// Судя по всему при обращении к элементу массива Сеттер не задействовался
+			// Решил реализовать геттер и сеттер через методы
+			public byte[] AvailableCandidates
+			{ 
+				get => availableCandidates;
+
+				set 
+				{
+						availableCandidates = value;
+						RefreshCountAvailableCandidates();
+				} 
+			}
+			*/
+
+			private byte? solveResult = null;
+			internal byte? SolveResult
+			{
+				get => solveResult;
+
+				// Пока отдельно не выделил поле solveResult логер андройда кидал почему-то:
+				// [libc] Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x7ffee4938ff0 in tid 18384 (ame.japangames2), pid 18384 (ame.japangames2)
+
+				set
+				{
+					solveResult = value;
+					if (value.HasValue) ClearCandidates(SolveResult.Value);
+					else ReplaceCandidates();
+				}
+			}
+
+			internal MySudokuCell(byte? digit = null)
+			{
+				if (digit != 0)	solveResult = digit;
+				else SolveResult = null;
+				if (solveResult.HasValue) ClearCandidates(solveResult.Value);
+			}
+
+			//Реализация метода копирования ячейки (Сохранение копии для метода подстановки)
+			public object Clone()
+			{
+				return new MySudokuCell
+				{
+					countAvailableCandidates = this.countAvailableCandidates,
+					availableCandidates = (byte[])this.availableCandidates.Clone(),
+					solveResult = this.solveResult
+				};
+			}
+
+			//Обновление числа кандидатов ячейки
+			internal void RefreshCountAvailableCandidates()
+			{
+				byte counter = 0;
+				for (byte k = 0; k < 9; k++) if (availableCandidates[k] != 0) counter++;
+				countAvailableCandidates = counter;
+			}
+
+			//Проверить конкретный кандидат
+			internal byte GetAvailableCandidate(byte index)
+			{
+				return availableCandidates[index];
+			}
+
+			//Установить конкретный кандидат
+			internal void SetAvailableCandidate(byte index, byte value)
+			{
+				availableCandidates[index] = value;
+				RefreshCountAvailableCandidates();
+			}
+
+			//Проверка на единственного кандидата
+			internal void CheckSingleCandidate()
+			{
+				byte counterCandidates = 0;
+				byte lastCandidate = 0;
+				foreach (var digit in availableCandidates)
+
+					if (digit != 0)
+					{
+						counterCandidates++;
+						lastCandidate = digit;
+					}
+
+				if (counterCandidates == 1)
+				{
+					solveResult = lastCandidate;
+					if (solveResult.HasValue) ClearCandidates(solveResult.Value);
+				}
+			}
+
+
+			private void ReplaceCandidates()
+			{
+				for (byte i = 0; i < 9; i++)
+				{
+					availableCandidates[i] = (byte)(i + 1);
+				}
+				RefreshCountAvailableCandidates();
+			}
+
+			private void ClearCandidates(byte digit)
+			{
+				for (byte i = 0; i < 9; i++)
+				{
+					if (i != digit - 1)
+						availableCandidates[i] = 0;
+				}
+				RefreshCountAvailableCandidates();
+			}
+		}
+
 		private struct MyIneffectiveSubstitutionCandidate
 		{
 			public byte i, j, candidate;
@@ -19,12 +140,80 @@ namespace JapanGames2
 
 		List<MyIneffectiveSubstitutionCandidate> myIneffectiveCandidates = new List<MyIneffectiveSubstitutionCandidate>();
 
-		public MySudokuCell[,] mySudokuCells;
-
-		public MySudokuGrid(ref MySudokuCell[,] grid)
+		private MySudokuCell[,] mySudokuCells = new MySudokuCell[9, 9];
+		public byte[,] MySudokuCells
         {
-			mySudokuCells = grid;
+			get 
+			{
+				byte[,] solveResult = new byte[9, 9];
+
+				for (byte i = 0; i < 9; i++)
+				{
+					for (byte j = 0; j < 9; j++)
+					{
+						solveResult[i, j] = mySudokuCells[i, j].SolveResult.GetValueOrDefault(0);
+					}
+				}
+
+				return solveResult;  
+			}
         }
+
+		private bool isSolved = false;
+		public bool IsSolved
+		{
+			get { return isSolved; }
+		}
+
+		public MySudokuGrid(byte[,] grid)
+		{
+			for (byte i = 0; i < 9; i++)
+            {
+				for (byte j = 0; j < 9; j++)
+                {
+					mySudokuCells[i, j] = new MySudokuCell(grid[i, j]);
+                }
+            }
+		}		
+
+		public byte? TrySolve() //Возвращает сложность решения головоломки
+        {
+			bool hasProgress = true;
+			byte difficulty = 0;
+
+			while (hasProgress)
+			{
+				if (difficulty < 1) difficulty = 1;
+				if (!SolvingProcedure1(mySudokuCells))
+                {
+					if (difficulty < 2) difficulty = 2;
+					if (!SolvingProcedure2(mySudokuCells))
+                    {
+						if (difficulty < 3) difficulty = 3;
+						if (!SolvingProcedure3(mySudokuCells))
+                        {
+							if (difficulty < 4) difficulty = 4;
+							if (!SolvingProcedure4(mySudokuCells))
+                            {
+								if (difficulty < 5) difficulty = 5;
+								if (!SolvingProcedure5(mySudokuCells))
+                                {
+									if (difficulty < 6) difficulty = 6;
+									if (!SolvingProcedureSubstitution(mySudokuCells))
+									{
+										difficulty = 0;
+										hasProgress = false;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (difficulty != 0) return difficulty;
+			else return null;
+		}
 
 		private bool CheckFaultSolving(MySudokuCell[,] grid) //Проверка конфликтов при решении методом подстановки
 		{
@@ -77,7 +266,7 @@ namespace JapanGames2
 			return isFault;
 		}
 
-		public bool SolvingProcedureSubstitution(MySudokuCell[,] grid) //Метод подстановки
+		private bool SolvingProcedureSubstitution(MySudokuCell[,] grid) //Метод подстановки
         {
 			bool isSolvingProgress = false;
 
@@ -169,11 +358,10 @@ namespace JapanGames2
 					}
 				}
 
-
 			return isSolvingProgress;
 		}
 				
-		public bool SolvingProcedure5(MySudokuCell[,] grid) //Связанные пары (бабочка)
+		private bool SolvingProcedure5(MySudokuCell[,] grid) //Связанные пары (бабочка)
         {
 			bool isSolvingProgress = false;
 
@@ -457,7 +645,7 @@ namespace JapanGames2
 			return isSolvingProgress;
 		}
 
-		public bool SolvingProcedure4(MySudokuCell[,] grid) //Скрытые группы кандидатов
+		private bool SolvingProcedure4(MySudokuCell[,] grid) //Скрытые группы кандидатов
         {
 			bool isSolvingProgress = false;
 
@@ -828,7 +1016,7 @@ namespace JapanGames2
 			return isSolvingProgress;
 		}
 
-		public bool SolvingProcedure3(MySudokuCell[,] grid) //Очевидные группы кандидатов
+		private bool SolvingProcedure3(MySudokuCell[,] grid) //Очевидные группы кандидатов
 		{
 			bool isSolvingProgress = false;
 
@@ -1121,7 +1309,7 @@ namespace JapanGames2
 			return isSolvingProgress;
 		}
 
-		public bool SolvingProcedure2(MySudokuCell[,] grid) //Исключение кандидатов
+		private bool SolvingProcedure2(MySudokuCell[,] grid) //Исключение кандидатов
 		{
 			bool isSolvingProgress = false;
 
@@ -1266,7 +1454,7 @@ namespace JapanGames2
 			return isSolvingProgress;
 		}
 
-		public bool SolvingProcedure1(MySudokuCell[,] grid) // Очевидные и скрытые синглы
+		private bool SolvingProcedure1(MySudokuCell[,] grid) // Очевидные и скрытые синглы
 		{
 			bool isSolvingProgress = false;
 
@@ -1394,5 +1582,11 @@ namespace JapanGames2
 
 			return isSolvingProgress;
 		}
+
+
+
+
 	}
+
+
 }

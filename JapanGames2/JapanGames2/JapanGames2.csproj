@@ -12,10 +12,20 @@
 
   <ItemGroup>
     <Compile Remove="ClassOld (not used).cs" />
+    <Compile Remove="MySudokuCell %28not used%29.cs" />
+    <Compile Remove="PageSudokuClassicOld.xaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="PageSudokuClassicOld.xaml" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="ClassOld %28not used%29.cs" />
+    <None Include="MySudokuCell (not used).cs" />
+    <None Include="PageSudokuClassicOld.xaml.cs">
+      <DependentUpon>PageSudokuClassicOld.xaml</DependentUpon>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -25,16 +35,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="MainMenu.xaml.cs">
-      <DependentUpon>MainMenu.xaml</DependentUpon>
+    <Compile Update="PageAbout.xaml.cs">
+      <DependentUpon>PageAbout.xaml</DependentUpon>
     </Compile>
-    <Compile Update="SudokuPage.xaml.cs">
-      <DependentUpon>SudokuPage.xaml</DependentUpon>
+    <Compile Update="PageMenuMain.xaml.cs">
+      <DependentUpon>PageMenuMain.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="PageSudoku.xaml.cs">
+      <DependentUpon>PageSudoku.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="MainMenu.xaml">
+    <EmbeddedResource Update="PageAbout.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="PageMenuMain.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
