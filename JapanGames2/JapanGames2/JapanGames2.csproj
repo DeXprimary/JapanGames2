@@ -11,21 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ClassOld (not used).cs" />
-    <Compile Remove="MySudokuCell %28not used%29.cs" />
-    <Compile Remove="PageSudokuClassicOld.xaml.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Remove="PageSudokuClassicOld.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="ClassOld %28not used%29.cs" />
-    <None Include="MySudokuCell (not used).cs" />
-    <None Include="PageSudokuClassicOld.xaml.cs">
-      <DependentUpon>PageSudokuClassicOld.xaml</DependentUpon>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
