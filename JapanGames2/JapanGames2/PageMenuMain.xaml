@@ -3,28 +3,33 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="JapanGames2.PageMainMenu"
              Title="PageMainMenu"
-             StyleClass="bgFilled" >
+             BackgroundColor="{StaticResource Color_BGFiller}" >
 
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
+            <Label 
+                Text="Welcome to JapCrossApp"
                 VerticalOptions="Center" 
                 HorizontalOptions="CenterAndExpand" 
                 />
 
-            <FlexLayout Margin="0"
-                        VerticalOptions="CenterAndExpand"
-                        Direction="Column" 
-                        AlignItems="Center"
-                        JustifyContent="SpaceAround"
-                        Padding="0">
+            <FlexLayout 
+                HeightRequest="350"
+                Margin="0"
+                VerticalOptions="CenterAndExpand"
+                Direction="Column" 
+                AlignItems="Center"
+                JustifyContent="SpaceBetween"
+                Padding="0">
 
-                <Button StyleClass="mainMenuButton, bgMarked" Clicked="OnClickedButtonSudoku" Text="Sudoku"/>
-                <Button StyleClass="mainMenuButton, bgMarked" Clicked="OnClickedButtonJapCross" Text="Get solve sudoku"/>
-                <Button StyleClass="mainMenuButton, bgMarked" Clicked="OnClickedButtonAbout" Text="About app"/>
+                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonSudoku" Text="Play Sudoku Now"/>
+                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonJapCross" Text="Help With Sudoku"/>
+                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonAbout" Text="About app =D"/>
 
             </FlexLayout>
             
         </StackLayout>
     </ContentPage.Content>
+    
+    
 </ContentPage>

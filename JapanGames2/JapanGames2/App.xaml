@@ -5,7 +5,89 @@
     
     <Application.Resources>
 
-        <StyleSheet Source="/MyStyle.css" />
+        <ResourceDictionary>
+
+            <Color x:Key="Color_LikeBlack">#404040</Color>
+
+            <Color x:Key="Color_MenuText">#0c297a</Color>
+
+            <Color x:Key="Color_ValidText">#0c7a29</Color>
+
+            <Color x:Key="Color_InvalidText">#7a0c29</Color>
+
+            <Color x:Key="Color_BGFiller">#dce3ee</Color>
+
+            <Color x:Key="Color_BGMarker">#afcfff</Color>
+
+            <Style x:Key="MainMenu_Button" TargetType="Button">
+
+                <Setter Property="BackgroundColor" Value="{StaticResource Key=Color_BGMarker}" />
+
+                <Setter Property="TextColor" Value="{StaticResource Key=Color_MenuText}" />
+
+                <Setter Property="CornerRadius" Value="5"/>
+
+                <Setter Property="HeightRequest" Value="80" />
+
+                <Setter Property="WidthRequest" Value="300" />
+
+                <Setter Property="Margin" Value="10" />
+
+                <Setter Property="Padding" Value="0" />
+
+                <Setter Property="FontSize" Value="Title" />
+
+            </Style>
+
+            <Style x:Key="PageSudoku_Button" TargetType="Button">
+
+                <Setter Property="BackgroundColor" Value="{StaticResource Key=Color_BGMarker}" />
+
+                <Setter Property="TextColor" Value="{StaticResource Key=Color_MenuText}" />
+
+                <Setter Property="CornerRadius" Value="5"/>
+
+                <Setter Property="HeightRequest" Value="60" />
+
+                <Setter Property="Margin" Value="0" />
+
+                <Setter Property="Padding" Value="0" />
+
+                <Setter Property="FontSize" Value="Large" />
+
+            </Style>
+
+            <Style x:Key="PageSudoku_NumPad" TargetType="Button">
+
+                <Setter Property="BackgroundColor" Value="{StaticResource Key=Color_BGFiller}" />
+
+                <Setter Property="TextColor" Value="{StaticResource Key=Color_MenuText}" />
+
+                <Setter Property="CornerRadius" Value="20"/>
+
+                <Setter Property="Margin" Value="0" />
+
+                <Setter Property="Padding" Value="0" />
+
+                <Setter Property="FontSize" Value="Title" />
+
+            </Style>
+
+            <Style x:Key="PageSudoku_MainGrid" TargetType="Label">
+
+                <Setter Property="BackgroundColor" Value="{StaticResource Key=Color_BGFiller}" />
+
+                <Setter Property="TextColor" Value="{StaticResource Key=Color_MenuText}" />
+
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+
+                <Setter Property="VerticalTextAlignment" Value="Center" />
+
+                <Setter Property="FontSize" Value="Title" />
+
+            </Style>
+
+        </ResourceDictionary>
 
     </Application.Resources>
     

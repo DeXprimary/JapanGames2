@@ -1,22 +1,50 @@
 ﻿navigationpage {
     -xf-bar-background-color: #dce3ee;
-    -xf-bar-font-color: #41558d;
+    -xf-bar-text-color: #0c297a;
 }
 
-.bgFilled {
+.MenuText {
+    color: #0c297a;
+    font-size: 28;
+}
+
+.LikeBlackColor {
+    color: #3c3c3c;
+}
+
+.BGFilled {
     background-color: #dce3ee;
 }
 
-.bgMarked {
+.BGMarked {
     background-color: #afcfff;
 }
 
-.mainMenuButton {
+.MainMenuButton {
     margin: 10;
     height: 80;
     width: 300;
     font-size: 27;
-    color: #41558d;
+    color: #0c297a;
     border-radius: 5;
 }
 
+.SudokuButton {
+    margin: 0;
+    height: 60;
+    font-size: 16;
+    color: #0c297a;
+    border-radius: 5;
+}
+
+.NumPad {
+    margin: 0;
+    background-color: #0c297a;
+    border-radius: 50;
+}
+
+.NumPadActivated {
+    margin: 0;
+    background-color: #afcfff;
+    border-radius: 50;
+}

@@ -22,6 +22,14 @@ namespace JapanGames2
             { 8, 0, 0, 0, 0, 0, 9, 0, 0 } 
         };
 
+        Label[,] mainField = new Label[9, 9];
+
+        Button[] numpadField = new Button[9];
+
+        Grid[,] gridChild = new Grid[3, 3];
+
+
+        //===---
         Label[,] gridCandidates = new Label[27, 27];
 
         BoxView[,] boxes = new BoxView[9, 9];
@@ -29,10 +37,12 @@ namespace JapanGames2
         BoxView[] boxesBottomLine = new BoxView[9];
         Label[] labelsBottomLine = new Label[9];
         MySudokuGrid mySudokuGrid;
-        byte Number = 0;
+        byte? SelectedNumber = null;
+        //===---
 
-        TapGestureRecognizer gestureTapGridNumbers = new TapGestureRecognizer();
-        TapGestureRecognizer gestureTapBottomLine = new TapGestureRecognizer();
+
+        TapGestureRecognizer gestureTapMainGrid = new TapGestureRecognizer();
+        TapGestureRecognizer gestureTapNumPad = new TapGestureRecognizer();
 
         void OnClickedButtonSolveIt(object sender, EventArgs args)
         {
@@ -49,8 +59,10 @@ namespace JapanGames2
 
         }
 
-        void OnTappedGridNumbers(object sender, EventArgs args)
+        void OnTappedMainGrid(object sender, EventArgs args)
         {
+            debugLabel.Text = "+++";
+
             /*
             MySudokuCell label = sender as MySudokuCell;
             if (Number != 0)
@@ -70,37 +82,39 @@ namespace JapanGames2
                     {
                         gridCandidates[i * 3 + k % 3, j * 3 + k / 3].Text = mySudokuGrid.mySudokuCells[i, j].GetAvailableCandidate(k).ToString();
                     }
-            */ 
+            */
             //Label1.Text = sender.GetType().ToString();
             //boxes[0,0].BackgroundColor = Color.Red;
         }
 
-        void OnTappedBottomLine(object sender, EventArgs args)
+        void OnClickedNumPad(object sender, EventArgs args)
         {
-            Label tmpLabel = sender as Label;
-            Number = byte.Parse(tmpLabel.Text);
-            if (boxesBottomLine[Number - 1].BackgroundColor == Color.White)
+            Button but = sender as Button;
+
+            if (but.BackgroundColor == (Color)Application.Current.Resources["Color_BGMarker"])
             {
-                foreach (var box in boxesBottomLine)
-                    if (box.BackgroundColor != Color.White) box.BackgroundColor = Color.White;
-                boxesBottomLine[Number - 1].BackgroundColor = Color.Khaki;
+                but.BackgroundColor = (Color)Application.Current.Resources["Color_BGFiller"];
+                SelectedNumber = null;
             }
             else
             {
-                boxesBottomLine[Number - 1].BackgroundColor = Color.White;
-                Number = 0;
+                foreach (var button in numpadField)
+                {
+                    button.BackgroundColor = (Color)Application.Current.Resources["Color_BGFiller"];
+                }
+                but.BackgroundColor = (Color)Application.Current.Resources["Color_BGMarker"];
+                SelectedNumber = byte.Parse(but.Text);
             }
+        }
+
+        void OnClickedButtonNewGame(object sender, EventArgs args)
+        {
+
         }
 
         public PageSudoku()
         {
             InitializeComponent();
-
-            Label[,] mainField = new Label[9, 9];
-
-            Label[] numpadField = new Label[9];
-
-            Grid[,] gridChild = new Grid[3, 3];
 
             for (int i = 0; i < 3; i++)
             {
@@ -110,7 +124,7 @@ namespace JapanGames2
                     Frame frameGridChildFirst = new Frame
                     {
                         Padding = 1,
-                        BackgroundColor = Color.Black,
+                        BackgroundColor = (Color)Application.Current.Resources["Color_MenuText"],
                         CornerRadius = 0,
                         HasShadow = false
                     };
@@ -120,7 +134,7 @@ namespace JapanGames2
                     Frame frameGridChildSecond = new Frame 
                     {
                         Padding = 0,
-                        BackgroundColor = Color.Gray,
+                        BackgroundColor = (Color)Application.Current.Resources["Color_BGMarker"],
                         CornerRadius = 0,
                         HasShadow = false
                     };
@@ -141,9 +155,7 @@ namespace JapanGames2
                     gridChild[i, j].ColumnDefinitions.Add(new ColumnDefinition() { Width = 40 });
                     gridChild[i, j].RowDefinitions.Add(new RowDefinition() { Height = 40 });
                     gridChild[i, j].RowDefinitions.Add(new RowDefinition() { Height = 40 });
-                    gridChild[i, j].RowDefinitions.Add(new RowDefinition() { Height = 40 });
-
-                    
+                    gridChild[i, j].RowDefinitions.Add(new RowDefinition() { Height = 40 });                                   
                     
                     for (int n = 0; n < 3; n++)
                     {
@@ -151,15 +163,11 @@ namespace JapanGames2
                         {
                             Label label = new Label
                             {
-                                Text = "0",
-                                FontSize = 28,
-                                TextColor = Color.Black,
-                                BackgroundColor = Color.FromHex("#eff5ff"),
-                                VerticalTextAlignment = TextAlignment.Center,
-                                HorizontalTextAlignment = TextAlignment.Center,
+                                Style = (Style)Application.Current.Resources["PageSudoku_MainGrid"],
+                                Text = "0"
                             };
 
-                            label.GestureRecognizers.Add(gestureTapGridNumbers);
+                            label.GestureRecognizers.Add(gestureTapMainGrid);
 
                             gridChild[i, j].Children.Add(label, m, n);
 
@@ -167,120 +175,45 @@ namespace JapanGames2
                         }
                     }
                 }
-            }
+            }                      
 
             for (int i = 0; i < 9; i++)
             {
+                /*
                 Label label = new Label
                 {
                     Text = (i + 1).ToString(),
-                    FontSize = 28,
-                    TextColor = Color.Black,
-                    BackgroundColor = Color.FromHex("#eff5ff"),
+                    //FontSize = 28,
+                    //TextColor = Color.Black,
+                    //BackgroundColor = Color.FromHex("#eff5ff"),
                     VerticalTextAlignment = TextAlignment.Center,
                     HorizontalTextAlignment = TextAlignment.Center,
+                    StyleClass = styleClassGridNumber
                 };
 
-                gridNumPad.Children.Add(label, i, 0);         
-
-            }
-
-
-
-            for (int i = 0; i < 9; i++)
-            {
-                for (int j = 0; j < 9; j++)
+                Frame frame = new Frame
                 {
-                    mainField[i, j].Text = (i + j).ToString();
-                }
+                    CornerRadius = 5,
+                    StyleClass = styleClassGridNumber
+                };
+                */
+
+                Button button = new Button
+                {
+                    Style = (Style)Application.Current.Resources["PageSudoku_NumPad"],
+                    Text = (i + 1).ToString()
+                };
+
+                gridNumPad.Children.Add(button, i, 0);
+
+                button.Clicked += OnClickedNumPad;
+
+                button.GestureRecognizers.Add(gestureTapNumPad);
+
+                numpadField[i] = button;
             }
 
-
-
-
-
-
-
-
-
-
-
-                    /*
-
-                    for (int i = 0; i < 9; i++)
-                    {
-                        for (int j = 0; j < 9; j++)
-                        {
-                            BoxView box = new BoxView();
-                            box.BackgroundColor = Color.White;
-                            box.CornerRadius = 3;
-                            boxes[i, j] = box;
-                            gridNumbers.Children.Add(box, j, i);
-
-                            MySudokuCell cell = new MySudokuCell();
-                            cell.Text = "";
-                            cell.FontSize = 25;
-                            cell.FontAttributes = FontAttributes.Bold;
-                            cell.VerticalTextAlignment = TextAlignment.Center;
-                            cell.HorizontalTextAlignment = TextAlignment.Center;
-                            cell.GestureRecognizers.Add(gestureTapGridNumbers);
-                            gridCells[i, j] = cell;
-                            gridNumbers.Children.Add(cell, j, i);
-
-                            //absoluteLayout.Children.Add(box, new Point(i*10, j*10));
-                        }
-
-                        BoxView boxBottomLine = new BoxView();
-                        boxBottomLine.BackgroundColor = Color.White;
-                        boxBottomLine.CornerRadius = 3;
-                        boxesBottomLine[i] = boxBottomLine;
-                        gridNumbersBottomRow.Children.Add(boxBottomLine, i, 0);
-
-                        Label labelForPrint = new Label();
-                        labelForPrint.Text = (i + 1).ToString();
-                        labelForPrint.FontSize = 25;
-                        labelForPrint.FontAttributes = FontAttributes.Bold;
-                        labelForPrint.VerticalTextAlignment = TextAlignment.Center;
-                        labelForPrint.HorizontalTextAlignment = TextAlignment.Center;
-                        labelForPrint.GestureRecognizers.Add(gestureTapBottomLine);
-                        labelsBottomLine[i] = labelForPrint;
-                        gridNumbersBottomRow.Children.Add(labelForPrint, i, 0);
-                    }
-
-                    // Set grid for candidates
-                    for (int i = 0; i < 27; i++)
-                    {
-                        gridOfCandidate.RowDefinitions.Add(new RowDefinition { Height = 10 });
-                        gridOfCandidate.ColumnDefinitions.Add(new ColumnDefinition { Width = 10 });
-                    }
-
-                    // Load Test Example with grid for candidates
-                    for (int i = 0; i < 9; i++) 
-                        for (int j = 0; j < 9; j++)
-                        {
-                            if (TestExample[i, j] != 0)
-                            {
-                                gridCells[i, j].Text = TestExample[i, j].ToString();
-                                gridCells[i, j].SolveResult = TestExample[i, j];
-                            }
-                        }
-
-
-                    mySudokuGrid = new MySudokuGrid(ref gridCells);
-
-                    */
-
-
-
-                    //boxes[0, 0].BackgroundColor = Color.Green;
-                    //myBox.GestureRecognizers.Add(gesture);
-                    //GestureRecognizers.Add(gesture);
-                    //gridNumbersBottomRow.GestureRecognizers.Add(gesture);
-                    gestureTapGridNumbers.Tapped += OnTappedGridNumbers;
-            gestureTapBottomLine.Tapped += OnTappedBottomLine;
-
-            //Title title1 = new Title
-
+            gestureTapMainGrid.Tapped += OnTappedMainGrid;
         }
     }
 }

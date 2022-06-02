@@ -10,18 +10,14 @@ namespace JapanGames2
         public App()
         {
             InitializeComponent();
-
-            List<string> asd = new List<string>();
-            asd.Add("bgFilling");
-
+             
             MainPage = new NavigationPage(new PageMainMenu())
             {
-                //BarBackgroundColor = Color.FromHex("#eff5ff"),
-                //StyleClass = asd,
-                Padding = new Thickness(0, 0, 0, 0),
-                BarTextColor = Color.Black,
-                HeightRequest = 10,
-            };
+                BarTextColor = (Color)Application.Current.Resources["Color_MenuText"],
+                BarBackgroundColor = (Color)Application.Current.Resources["Color_BGFiller"],
+                BackgroundColor = (Color)Application.Current.Resources["Color_BGFiller"],
+                Padding = new Thickness(0, 0, 0, 0)
+            };            
         }
 
         protected override void OnStart()

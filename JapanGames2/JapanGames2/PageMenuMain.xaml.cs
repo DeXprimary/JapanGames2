@@ -19,7 +19,7 @@ namespace JapanGames2
 
         void OnClickedButtonJapCross(object sender, EventArgs args)
         {
-
+            
         }
 
         async void OnClickedButtonAbout(object sender, EventArgs args)
@@ -29,7 +29,7 @@ namespace JapanGames2
 
         public PageMainMenu()
         {
-            InitializeComponent();
+            InitializeComponent();                       
         }
     }
 }
