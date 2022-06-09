@@ -1,131 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Xamarin.Forms;
 
 namespace JapanGames2
 {
     public class MySudokuGrid
-    {		
-		//Реализация класса ячейки поля судоку
-		private class MySudokuCell : ICloneable
-		{
-			private byte countAvailableCandidates = 9;
-			internal byte CountAvailableCandidates
-			{
-				get => countAvailableCandidates;
-			}
-
-			private byte[] availableCandidates = new byte[9] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-			/*
-			// Судя по всему при обращении к элементу массива Сеттер не задействовался
-			// Решил реализовать геттер и сеттер через методы
-			public byte[] AvailableCandidates
-			{ 
-				get => availableCandidates;
-
-				set 
-				{
-						availableCandidates = value;
-						RefreshCountAvailableCandidates();
-				} 
-			}
-			*/
-
-			private byte? solveResult = null;
-			internal byte? SolveResult
-			{
-				get => solveResult;
-
-				// Пока отдельно не выделил поле solveResult логер андройда кидал почему-то:
-				// [libc] Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x7ffee4938ff0 in tid 18384 (ame.japangames2), pid 18384 (ame.japangames2)
-
-				set
-				{
-					solveResult = value;
-					if (value.HasValue) ClearCandidates(SolveResult.Value);
-					else ReplaceCandidates();
-				}
-			}
-
-			internal MySudokuCell(byte? digit = null)
-			{
-				if (digit != 0)	solveResult = digit;
-				else SolveResult = null;
-				if (solveResult.HasValue) ClearCandidates(solveResult.Value);
-			}
-
-			//Реализация метода копирования ячейки (Сохранение копии для метода подстановки)
-			public object Clone()
-			{
-				return new MySudokuCell
-				{
-					countAvailableCandidates = this.countAvailableCandidates,
-					availableCandidates = (byte[])this.availableCandidates.Clone(),
-					solveResult = this.solveResult
-				};
-			}
-
-			//Обновление числа кандидатов ячейки
-			internal void RefreshCountAvailableCandidates()
-			{
-				byte counter = 0;
-				for (byte k = 0; k < 9; k++) if (availableCandidates[k] != 0) counter++;
-				countAvailableCandidates = counter;
-			}
-
-			//Проверить конкретный кандидат
-			internal byte GetAvailableCandidate(byte index)
-			{
-				return availableCandidates[index];
-			}
-
-			//Установить конкретный кандидат
-			internal void SetAvailableCandidate(byte index, byte value)
-			{
-				availableCandidates[index] = value;
-				RefreshCountAvailableCandidates();
-			}
-
-			//Проверка на единственного кандидата
-			internal void CheckSingleCandidate()
-			{
-				byte counterCandidates = 0;
-				byte lastCandidate = 0;
-				foreach (var digit in availableCandidates)
-
-					if (digit != 0)
-					{
-						counterCandidates++;
-						lastCandidate = digit;
-					}
-
-				if (counterCandidates == 1)
-				{
-					solveResult = lastCandidate;
-					if (solveResult.HasValue) ClearCandidates(solveResult.Value);
-				}
-			}
-
-
-			private void ReplaceCandidates()
-			{
-				for (byte i = 0; i < 9; i++)
-				{
-					availableCandidates[i] = (byte)(i + 1);
-				}
-				RefreshCountAvailableCandidates();
-			}
-
-			private void ClearCandidates(byte digit)
-			{
-				for (byte i = 0; i < 9; i++)
-				{
-					if (i != digit - 1)
-						availableCandidates[i] = 0;
-				}
-				RefreshCountAvailableCandidates();
-			}
-		}
+    {
+		public delegate void Solvable(string message);		
 
 		private struct MyIneffectiveSubstitutionCandidate
 		{
@@ -141,6 +23,16 @@ namespace JapanGames2
 		List<MyIneffectiveSubstitutionCandidate> myIneffectiveCandidates = new List<MyIneffectiveSubstitutionCandidate>();
 
 		private MySudokuCell[,] mySudokuCells = new MySudokuCell[9, 9];
+
+		public MySudokuCell this[int i, int j]
+        {
+            get
+            {
+                return mySudokuCells[i, j];
+            }
+        }
+
+        /*
 		public byte[,] MySudokuCells
         {
 			get 
@@ -158,13 +50,14 @@ namespace JapanGames2
 				return solveResult;  
 			}
         }
+		*/
 
-		private bool isSolved = false;
+        private bool isSolved = false;
 		public bool IsSolved
 		{
 			get { return isSolved; }
 		}
-
+		
 		public MySudokuGrid(byte[,] grid)
 		{
 			for (byte i = 0; i < 9; i++)
@@ -176,13 +69,28 @@ namespace JapanGames2
             }
 		}		
 
-		public byte? TrySolve() //Возвращает сложность решения головоломки
+		public bool SetValueCell(byte value, byte i, byte j)
+        {
+			bool resultOperation = false;
+
+			if (mySudokuCells[i, j].GetAvailableCandidate((byte)(value - 1)) != 0)
+            {
+				mySudokuCells[i, j].SolveResult = value;
+				resultOperation = true;
+			}
+
+			return resultOperation;
+        }
+
+		public byte TrySolve() //Возвращает сложность решения головоломки
         {
 			bool hasProgress = true;
+			byte countUnsolvedCells = 0;
 			byte difficulty = 0;
 
-			while (hasProgress)
-			{
+			
+			while (hasProgress && !isSolved)
+			{				
 				if (difficulty < 1) difficulty = 1;
 				if (!SolvingProcedure1(mySudokuCells))
                 {
@@ -209,10 +117,47 @@ namespace JapanGames2
 						}
 					}
 				}
+
+				countUnsolvedCells = 0;
+
+				for (byte i = 0; i < 9; i++)
+				{
+					for (byte j = 0; j < 9; j++)
+					{
+						if (!mySudokuCells[i, j].SolveResult.HasValue) countUnsolvedCells++;
+					}
+				}
+
+				if (countUnsolvedCells == 0) isSolved = true;
 			}
 
-			if (difficulty != 0) return difficulty;
-			else return null;
+			string message;
+
+			switch (difficulty)
+            {
+				case 0:
+					message = "Нет аналитического решения!";
+					break;
+				case 1:
+					message = "Очень лёгкий судоку";
+					break;
+				case 2:
+					message = "Лёгкий судоку";
+					break;
+				case 3:
+					message = "Обычный судоку";
+					break;
+				case 4:
+					message = "Сложный судоку";
+					break;
+				case 5:
+					message = "Очень сложный судоку";
+					break;
+			}
+
+			Solvable Message;
+
+			return difficulty;
 		}
 
 		private bool CheckFaultSolving(MySudokuCell[,] grid) //Проверка конфликтов при решении методом подстановки
@@ -289,11 +234,7 @@ namespace JapanGames2
 							minCand_j = j;
 							minCand = gridTemp[i, j].CountAvailableCandidates;
 						}
-					if (gridTemp[i, j].SolveResult.HasValue)
-						Console.Write("{0} ", gridTemp[i, j].SolveResult.Value);
-					else Console.Write("0 ");
 				}
-				Console.WriteLine();
 			}
 
 			byte? currentCandIndex = null;
@@ -311,31 +252,23 @@ namespace JapanGames2
 				}
             }
 
-			Console.WriteLine("Coords({0},{1}) - CandForTry:{2}", minCand_i, minCand_j, currentCandIndex);
-
 			//Пытаемся решить стандартными методами
 			bool isHaveTempGridProgress = true;
 
 			if (currentCandIndex.HasValue)
 				while (isHaveTempGridProgress)
 				{
-					Console.WriteLine("1");
 					if (!SolvingProcedure1(gridTemp))
 					{
-						Console.WriteLine("2");
 						if (!SolvingProcedure2(gridTemp))
 						{
-							Console.WriteLine("3");
 							if (!SolvingProcedure3(gridTemp))
 							{
-								Console.WriteLine("4");
 								if (!SolvingProcedure4(gridTemp))
 								{
-									Console.WriteLine("5");
 									if (!SolvingProcedure5(gridTemp))
 									{
 										isHaveTempGridProgress = false;
-										Console.WriteLine("NO PROGRESS");
 									}
 								}
 							}
@@ -347,7 +280,6 @@ namespace JapanGames2
 						grid[minCand_i, minCand_j].SetAvailableCandidate(currentCandIndex.Value, 0);
 						isSolvingProgress = true;
 						myIneffectiveCandidates.Clear();
-						Console.WriteLine("CANDIDATE EXCLUDED");
 						break;
 					}
 
@@ -764,9 +696,6 @@ namespace JapanGames2
                         }
 					}
 				}
-
-				for (byte j = 0; j < 9; j++)
-					grid[i, j].CheckSingleCandidate();
 			}
 
 			//Ищем в столбах скрытые группы кандидатов
@@ -884,9 +813,6 @@ namespace JapanGames2
 						}
 					}
 				}
-
-				for (byte i = 0; i < 9; i++)
-					grid[i, j].CheckSingleCandidate();
 			}
 			
 			//Ищем в квадратах скрытые группы кандидатов
@@ -1006,11 +932,7 @@ namespace JapanGames2
 							}
 						}
 					}
-
-					for (byte k = 0; k < 9; k++)
-						grid[i * 3 + k / 3, j * 3 + k % 3].CheckSingleCandidate();
 				}
-					
 			}
 
 			return isSolvingProgress;
@@ -1020,7 +942,6 @@ namespace JapanGames2
 		{
 			bool isSolvingProgress = false;
 
-			Console.WriteLine("3 процедура - 1");
 			//Ищем в строках очевидные группы кандидатов
 			for (byte i = 0; i < 9; i++)
             {
@@ -1108,8 +1029,6 @@ namespace JapanGames2
                                     }
                                 }
 							}
-
-							grid[i, j].CheckSingleCandidate();
 						}
                     }
                 }
@@ -1202,8 +1121,6 @@ namespace JapanGames2
 									}
 								}
 							}
-
-							grid[i, j].CheckSingleCandidate();
 						}
 					}
 				}
@@ -1298,8 +1215,6 @@ namespace JapanGames2
 										}
 									}
 								}
-
-								grid[i * 3 + n / 3, j * 3 + n % 3].CheckSingleCandidate();
 							}
 						}
 					}
@@ -1313,13 +1228,11 @@ namespace JapanGames2
 		{
 			bool isSolvingProgress = false;
 
-			Console.WriteLine("2 процедура - 1");
 			//Исключаем очевидно парных кандидатов квадратов из строк и столбов
 			for (byte i = 0; i < 3; i++)
 			{
 				for (byte j = 0; j < 3; j++)
 				{
-					//Console.WriteLine();
 					for (byte num = 0; num < 9; num++)
 					{
 						byte countNumbers = 0;
@@ -1335,7 +1248,6 @@ namespace JapanGames2
 								if (countNumbers == 2) { pos2 = k; }
 							}
 						}
-						//Console.WriteLine("{0} {1} {2} {3}", num + 1, countNumbers, pos1, pos2);
 
 						if (countNumbers == 2)
 						{
@@ -1347,7 +1259,6 @@ namespace JapanGames2
 										if (grid[x, j * 3 + (pos1 % 3)].GetAvailableCandidate(num) != 0)
                                         {
 											grid[x, j * 3 + (pos1 % 3)].SetAvailableCandidate(num, 0);
-											//grid[x, j * 3 + (pos1 % 3)].RefreshCountAvailableCandidates();
 											isSolvingProgress = true;
 										}
 									}
@@ -1360,15 +1271,12 @@ namespace JapanGames2
 										if (grid[i * 3 + (pos1 / 3), x].GetAvailableCandidate(num) != 0)
                                         {
 											grid[i * 3 + (pos1 / 3), x].SetAvailableCandidate(num, 0);
-											//grid[i * 3 + (pos1 / 3), x].RefreshCountAvailableCandidates();
 											isSolvingProgress = true;
 										}
 									}
 							}
 						}
 					}
-
-					grid[i, j].CheckSingleCandidate();
 				}
 			}
 
@@ -1401,8 +1309,6 @@ namespace JapanGames2
 									if (grid[i / 3 * 3 + x / 3, pos1 / 3 * 3 + x % 3].GetAvailableCandidate(num) != 0)
                                     {
 										grid[i / 3 * 3 + x / 3, pos1 / 3 * 3 + x % 3].SetAvailableCandidate(num, 0);
-										grid[i / 3 * 3 + x / 3, pos1 / 3 * 3 + x % 3].CheckSingleCandidate();
-										//grid[i / 3 * 3 + x / 3, pos1 / 3 * 3 + x % 3].RefreshCountAvailableCandidates();
 										isSolvingProgress = true;
 									}
 								}
@@ -1440,8 +1346,6 @@ namespace JapanGames2
 									if (grid[pos1 / 3 * 3 + x / 3, j / 3 * 3 + x % 3].GetAvailableCandidate(num) != 0)
                                     {
 										grid[pos1 / 3 * 3 + x / 3, j / 3 * 3 + x % 3].SetAvailableCandidate(num, 0);
-										grid[pos1 / 3 * 3 + x / 3, j / 3 * 3 + x % 3].CheckSingleCandidate();
-										//grid[pos1 / 3 * 3 + x / 3, j / 3 * 3 + x % 3].RefreshCountAvailableCandidates();
 										isSolvingProgress = true;
 									}
 								}
@@ -1458,7 +1362,6 @@ namespace JapanGames2
 		{
 			bool isSolvingProgress = false;
 
-			Console.WriteLine("1 процедура - 1");
 			for (byte i = 0; i < 9; i++)
 			{
 				for (byte j = 0; j < 9; j++)
@@ -1475,7 +1378,6 @@ namespace JapanGames2
 								if (grid[i, k].GetAvailableCandidate((byte)(grid[i, j].SolveResult.Value - 1)) != 0)
                                 {
 									grid[i, k].SetAvailableCandidate((byte)(grid[i, j].SolveResult.Value - 1), 0);
-									//grid[i, k].RefreshCountAvailableCandidates();
 									isSolvingProgress = true;
 								}
 							}
@@ -1489,7 +1391,6 @@ namespace JapanGames2
 								if (grid[k, j].GetAvailableCandidate((byte)(grid[i, j].SolveResult.Value - 1)) != 0)
                                 {
 									grid[k, j].SetAvailableCandidate((byte)(grid[i, j].SolveResult.Value - 1), 0);
-									//grid[k, j].RefreshCountAvailableCandidates();
 									isSolvingProgress = true;
 								}
 							}
@@ -1503,7 +1404,6 @@ namespace JapanGames2
 								if (grid[i / 3 * 3 + k / 3, j / 3 * 3 + k % 3].GetAvailableCandidate((byte)(grid[i, j].SolveResult.Value - 1)) != 0)
                                 {
 									grid[i / 3 * 3 + k / 3, j / 3 * 3 + k % 3].SetAvailableCandidate((byte)(grid[i, j].SolveResult.Value - 1), 0);
-									//grid[i / 3 * 3 + k / 3, j / 3 * 3 + k % 3].RefreshCountAvailableCandidates();
 									isSolvingProgress = true;
 								}
 							}
@@ -1563,8 +1463,6 @@ namespace JapanGames2
 								if (i != (i / 3 * 3 + k / 3) || j != (j / 3 * 3 + k % 3))
 								{
 									if (grid[i / 3 * 3 + k / 3, j / 3 * 3 + k % 3].GetAvailableCandidate(num) == 0) countNotAvailableCandidates++;
-
-									//grid[i/3*3 + k/3, j/3*3 + k%3].availableVariantes[grid[i,j].solve - 1] = 0;
 								}
 							}
 							if (countNotAvailableCandidates == 8)
@@ -1575,8 +1473,6 @@ namespace JapanGames2
 							}
 						}
 					}
-
-					grid[i, j].CheckSingleCandidate();
 				}
 			}
 

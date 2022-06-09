@@ -23,16 +23,20 @@
                 Text="New Game" HeightRequest="40" WidthRequest="150"/>
 
             <Frame 
+                CascadeInputTransparent="False"
                 BackgroundColor="{StaticResource Color_BGFiller}" 
                 BorderColor="{StaticResource Color_MenuText}" 
                 HasShadow="True"  CornerRadius="5" 
                 HeightRequest="40" WidthRequest="80" 
-                Padding="0" Margin="0">
+                Padding="0" Margin="0"
+                >
 
                 <Label 
                     Style="{StaticResource PageSudoku_MainGrid}" 
                     TextColor="{StaticResource Color_MenuText}" 
-                    x:Name="timerLabel" Text="12:34"/>
+                    x:Name="timerLabel" Text="8888"
+                    Padding="0" Margin="0"
+                    BackgroundColor="Transparent"/>
 
             </Frame>
             
@@ -50,7 +54,8 @@
                       ColumnSpacing="0"
                       RowSpacing="0"
                       Padding="0"
-                      HorizontalOptions="Center">
+                      HorizontalOptions="CenterAndExpand"
+                      VerticalOptions="CenterAndExpand">
 
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -103,8 +108,9 @@
             Padding="0">
 
             <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonClear" Text="Clear" HeightRequest="40" WidthRequest="90"/>
-            <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonHint"  Text="Hint!" HeightRequest="40" WidthRequest="90" />
-            <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonSolveIt" Text="Solve it!" HeightRequest="40" WidthRequest="120"/>
+            <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonErase" Text="Erase" HeightRequest="40" WidthRequest="90" x:Name="buttonErase" IsEnabled="False"/>
+            <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonHint"  Text="Hint" HeightRequest="40" WidthRequest="80" />
+            <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonSolveIt" Text="Solve it" HeightRequest="40" WidthRequest="110"/>
 
         </FlexLayout>
 

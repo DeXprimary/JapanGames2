@@ -19,6 +19,8 @@
 
             <Color x:Key="Color_BGMarker">#afcfff</Color>
 
+            <Color x:Key="Color_ActiveButton">#7f9fff</Color>
+
             <Style x:Key="MainMenu_Button" TargetType="Button">
 
                 <Setter Property="BackgroundColor" Value="{StaticResource Key=Color_BGMarker}" />
@@ -69,7 +71,7 @@
 
                 <Setter Property="Padding" Value="0" />
 
-                <Setter Property="FontSize" Value="Title" />
+                <Setter Property="FontSize" Value="30" />
 
             </Style>
 
@@ -81,9 +83,13 @@
 
                 <Setter Property="HorizontalTextAlignment" Value="Center" />
 
-                <Setter Property="VerticalTextAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0" />
 
-                <Setter Property="FontSize" Value="Title" />
+                <Setter Property="Padding" Value="0" />
+
+                <Setter Property="VerticalTextAlignment" Value="Center" />
+                
+                <Setter Property="FontSize" Value="30" />
 
             </Style>
 
