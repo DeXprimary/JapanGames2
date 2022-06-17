@@ -15,38 +15,36 @@ namespace JapanGames2
         async void OnClickedButtonSudoku(object sender, EventArgs args)
         {
             byte difficulty;
-            switch (await DisplayActionSheet("Difficulty", "Cancel", null, "Very easy", "Easy", "Normal", "Hard", "Very hard", "Other source"))
+
+            switch (await DisplayActionSheet("Difficulty", "Cancel", null, "Easy", "Normal", "Hard", "Insane"))
             {
-                case "Very easy":
+                case "Easy":
                     difficulty = 1;
                     break;
 
-                case "Easy":
+                case "Normal":
                     difficulty = 2;
                     break;
 
-                case "Normal":
+                case "Hard":
                     difficulty = 3;
                     break;
 
-                case "Hard":
+                case "Insane":
                     difficulty = 4;
                     break;
 
-                case "Very hard":
-                    difficulty = 5;
-                    break;
-
                 default:
-                    difficulty = 0;
+                    difficulty = 4;
                     break;
             }
+
             await Navigation.PushAsync(new PageSudoku(difficulty));
         }
 
-        void OnClickedButtonJapCross(object sender, EventArgs args)
+        async void OnClickedButtonJapCross(object sender, EventArgs args)
         {
-            
+            await Navigation.PushAsync(new PageSudoku());
         }
 
         async void OnClickedButtonAbout(object sender, EventArgs args)

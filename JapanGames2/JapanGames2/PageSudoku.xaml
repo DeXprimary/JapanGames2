@@ -5,11 +5,17 @@
              Title="PageSudoku"
              BackgroundColor="{StaticResource Color_BGFiller}">
 
-    <StackLayout>
+    <ScrollView IsEnabled="True">
 
-        <Label x:Name="debugLabel" Text="x" />
+        <StackLayout>
 
-        <FlexLayout
+            <Label x:Name="debugLabel3" Text="" />
+
+            <Label x:Name="debugLabel2" Text="" />
+
+            <Label x:Name="debugLabel" Text="" />
+
+            <FlexLayout
             Direction="Row"
             AlignItems="Center"
             JustifyContent="SpaceAround"
@@ -17,12 +23,12 @@
             Padding="0"
             >
 
-            <Button 
+                <Button 
                 Style="{StaticResource PageSudoku_Button}" 
                 Clicked="OnClickedButtonNewGame" 
                 Text="New Game" HeightRequest="40" WidthRequest="150"/>
 
-            <Frame 
+                <Frame 
                 CascadeInputTransparent="False"
                 BackgroundColor="{StaticResource Color_BGFiller}" 
                 BorderColor="{StaticResource Color_MenuText}" 
@@ -31,89 +37,93 @@
                 Padding="0" Margin="0"
                 >
 
-                <Label 
+                    <Label 
                     Style="{StaticResource PageSudoku_MainGrid}" 
                     TextColor="{StaticResource Color_MenuText}" 
                     x:Name="timerLabel" Text="8888"
                     Padding="0" Margin="0"
                     BackgroundColor="Transparent"/>
 
-            </Frame>
-            
-        </FlexLayout>
+                </Frame>
 
-        <AbsoluteLayout HorizontalOptions="Center">
+            </FlexLayout>
 
-            <Frame BackgroundColor="{StaticResource Color_MenuText}" 
+            <AbsoluteLayout HorizontalOptions="Center">
+
+                <Frame BackgroundColor="{StaticResource Color_MenuText}" 
                    Margin="0, 5"
                    Padding="1" 
                    CornerRadius="0" 
                    HasShadow="True">
 
-                <Grid x:Name="gridMain"
+                    <Grid x:Name="gridMain"
                       ColumnSpacing="0"
                       RowSpacing="0"
                       Padding="0"
                       HorizontalOptions="CenterAndExpand"
                       VerticalOptions="CenterAndExpand">
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
 
-                </Grid>
+                    </Grid>
 
-            </Frame>
+                </Frame>
 
-        </AbsoluteLayout>
+            </AbsoluteLayout>
 
-        <Grid x:Name="gridNumPad"
+            <Grid x:Name="gridNumPad"
               Margin="0, 5"
               ColumnSpacing="1" 
               RowSpacing="1" 
               Padding="0" 
               HorizontalOptions="Center">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40"/>
-            </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="40"/>
-            </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="40"/>
+                </Grid.ColumnDefinitions>
 
-        </Grid>
+            </Grid>
 
-        <FlexLayout 
+            <FlexLayout 
             Direction="Row"
             AlignItems="Center"
             JustifyContent="SpaceAround"
             Margin="0, 5"
             Padding="0">
 
-            <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonClear" Text="Clear" HeightRequest="40" WidthRequest="90"/>
-            <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonErase" Text="Erase" HeightRequest="40" WidthRequest="90" x:Name="buttonErase" IsEnabled="False"/>
-            <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonHint"  Text="Hint" HeightRequest="40" WidthRequest="80" />
-            <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonSolveIt" Text="Solve it" HeightRequest="40" WidthRequest="110"/>
+                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonClear" Text="Clear" HeightRequest="40" WidthRequest="90"/>
+                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonErase" Text="Erase" HeightRequest="40" WidthRequest="90" x:Name="buttonErase" IsEnabled="False"/>
+                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonHint"  Text="Hint" HeightRequest="40" WidthRequest="80" />
+                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonSolveIt" Text="Solve it" HeightRequest="40" WidthRequest="110"/>
 
-        </FlexLayout>
+            </FlexLayout>
 
-    </StackLayout>
+        </StackLayout>
+
+    </ScrollView>
+    
+    
 
 </ContentPage>

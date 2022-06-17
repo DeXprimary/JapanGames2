@@ -7,12 +7,14 @@ namespace JapanGames2
 {
     public class MySudokuGrid
     {
-		public delegate void Solvable(string message);		
+		public delegate void MethodCallback(int methodID);
 
-		private struct MyIneffectiveSubstitutionCandidate
+		public event MethodCallback MethodWorkedWithProgress = delegate { };
+
+        private struct MySubstitutionCandidate
 		{
 			public byte i, j, candidate;
-			public MyIneffectiveSubstitutionCandidate(byte i_Index, byte j_Index, byte candidateIndex)
+			public MySubstitutionCandidate(byte i_Index, byte j_Index, byte candidateIndex)
 			{
 				i = i_Index;
 				j = j_Index;
@@ -20,7 +22,7 @@ namespace JapanGames2
 			}
 		}
 
-		List<MyIneffectiveSubstitutionCandidate> myIneffectiveCandidates = new List<MyIneffectiveSubstitutionCandidate>();
+		List<MySubstitutionCandidate> myIneffectiveCandidates = new List<MySubstitutionCandidate>();
 
 		private MySudokuCell[,] mySudokuCells = new MySudokuCell[9, 9];
 
@@ -67,7 +69,19 @@ namespace JapanGames2
 					mySudokuCells[i, j] = new MySudokuCell(grid[i, j]);
                 }
             }
-		}		
+		}
+
+		public void SetNewGrid(byte[,] grid)
+		{
+			for (byte i = 0; i < 9; i++)
+			{
+				for (byte j = 0; j < 9; j++)
+				{
+					mySudokuCells[i, j].SolveResult = grid[i, j];
+				}
+			}
+			CheckCompleteSolving(mySudokuCells);
+		}
 
 		public bool SetValueCell(byte value, byte i, byte j)
         {
@@ -76,37 +90,52 @@ namespace JapanGames2
 			if (mySudokuCells[i, j].GetAvailableCandidate((byte)(value - 1)) != 0)
             {
 				mySudokuCells[i, j].SolveResult = value;
+
 				resultOperation = true;
 			}
-
 			return resultOperation;
+        }
+
+		public virtual bool TryCleanInvalidCandidate()
+        {
+			return SolvingProcedure1(mySudokuCells);
+		}
+
+		public bool CheckGridForFault()
+        {
+			return CheckFaultSolving(mySudokuCells);
         }
 
 		public byte TrySolve() //Возвращает сложность решения головоломки
         {
-			bool hasProgress = true;
-			byte countUnsolvedCells = 0;
+			bool hasProgress = true;		
+			
 			byte difficulty = 0;
-
 			
 			while (hasProgress && !isSolved)
 			{				
 				if (difficulty < 1) difficulty = 1;
+				
 				if (!SolvingProcedure1(mySudokuCells))
                 {
 					if (difficulty < 2) difficulty = 2;
+					
 					if (!SolvingProcedure2(mySudokuCells))
                     {
 						if (difficulty < 3) difficulty = 3;
+						
 						if (!SolvingProcedure3(mySudokuCells))
                         {
-							if (difficulty < 4) difficulty = 4;
+							//if (difficulty < 4) difficulty = 4;
+							
 							if (!SolvingProcedure4(mySudokuCells))
                             {
-								if (difficulty < 5) difficulty = 5;
+								//if (difficulty < 5) difficulty = 5;
+								
 								if (!SolvingProcedure5(mySudokuCells))
                                 {
-									if (difficulty < 6) difficulty = 6;
+									if (difficulty < 4) difficulty = 4;
+									
 									if (!SolvingProcedureSubstitution(mySudokuCells))
 									{
 										difficulty = 0;
@@ -117,47 +146,31 @@ namespace JapanGames2
 						}
 					}
 				}
-
-				countUnsolvedCells = 0;
-
-				for (byte i = 0; i < 9; i++)
-				{
-					for (byte j = 0; j < 9; j++)
-					{
-						if (!mySudokuCells[i, j].SolveResult.HasValue) countUnsolvedCells++;
-					}
-				}
-
-				if (countUnsolvedCells == 0) isSolved = true;
+				CheckCompleteSolving(mySudokuCells);								
 			}
-
-			string message;
-
-			switch (difficulty)
-            {
-				case 0:
-					message = "Нет аналитического решения!";
-					break;
-				case 1:
-					message = "Очень лёгкий судоку";
-					break;
-				case 2:
-					message = "Лёгкий судоку";
-					break;
-				case 3:
-					message = "Обычный судоку";
-					break;
-				case 4:
-					message = "Сложный судоку";
-					break;
-				case 5:
-					message = "Очень сложный судоку";
-					break;
-			}
-
-			Solvable Message;
-
 			return difficulty;
+		}
+
+		private bool CheckCompleteSolving(MySudokuCell[,] grid)
+        {
+			byte countUnsolvedCells = 0;
+
+			for (byte i = 0; i < 9; i++)
+			{
+				for (byte j = 0; j < 9; j++)
+				{
+					if (!grid[i, j].SolveResult.HasValue) countUnsolvedCells++;
+				}
+			}
+			if (countUnsolvedCells == 0) 
+			{
+				isSolved = true;
+			}
+			else
+            {
+				isSolved = false;
+			}
+			return isSolved;
 		}
 
 		private bool CheckFaultSolving(MySudokuCell[,] grid) //Проверка конфликтов при решении методом подстановки
@@ -165,48 +178,59 @@ namespace JapanGames2
 			bool isFault = false;
 
 			for (byte i = 0; i < 9; i++)
+
 				for (byte j = 0; j < 9; j++)
                 {
 					if (grid[i, j].SolveResult.HasValue)
                     {
 						//Проверим отсутствие конфликтов в столбах
 						if (!isFault)
+
 							for (byte i_ = 0; i_ < 9; i_++)
 							{
 								if (i_ != i && grid[i_, j].SolveResult.HasValue)
+
 									if (grid[i_, j].SolveResult.Value == grid[i, j].SolveResult.Value)
 									{
 										isFault = true;
+
 										break;
 									}
 							}
 
 						//Проверим отсутствие конфликтов в строках
 						if (!isFault)
+
 							for (byte j_ = 0; j_ < 9; j_++)
 							{
 								if (j_ != j && grid[i, j_].SolveResult.HasValue)
+
 									if (grid[i, j_].SolveResult.Value == grid[i, j].SolveResult.Value)
 									{
 										isFault = true;
+
 										break;
 									}
 							}
 
 						//Проверим отсутствие конфликтов в квадратах
 						if (!isFault)
+
 							for (byte i_ = (byte)((i / 3) * 3); i_ < (byte)((i / 3) * 3 + 3); i_++)
+
 								for (byte j_ = (byte)((j / 3) * 3); j_ < (byte)((j / 3) * 3 + 3); j_++)
 								{
 									if ((i_ != i || j_ != j) && grid[i_, j_].SolveResult.HasValue)
+
 										if (grid[i_, j_].SolveResult.Value == grid[i, j].SolveResult.Value)
 										{
 											isFault = true;
+
 											break;
 										}
 								}
 					}
-                }
+                }			
 
 			return isFault;
 		}
@@ -231,7 +255,9 @@ namespace JapanGames2
 						if (gridTemp[i, j].CountAvailableCandidates < minCand)
 						{
 							minCand_i = i;
+
 							minCand_j = j;
+
 							minCand = gridTemp[i, j].CountAvailableCandidates;
 						}
 				}
@@ -243,11 +269,12 @@ namespace JapanGames2
 			for (byte k = 0; k < 9; k++)
             {
 				if (gridTemp[minCand_i, minCand_j].GetAvailableCandidate(k) != 0 
-					&& !myIneffectiveCandidates.Contains(new MyIneffectiveSubstitutionCandidate(minCand_i, minCand_j, k)))
-                {
-					
+					&& !myIneffectiveCandidates.Contains(new MySubstitutionCandidate(minCand_i, minCand_j, k)))
+                {					
 					gridTemp[minCand_i, minCand_j].SolveResult = gridTemp[minCand_i, minCand_j].GetAvailableCandidate(k);
+					
 					currentCandIndex = k;
+					
 					break;
 				}
             }
@@ -256,6 +283,7 @@ namespace JapanGames2
 			bool isHaveTempGridProgress = true;
 
 			if (currentCandIndex.HasValue)
+
 				while (isHaveTempGridProgress)
 				{
 					if (!SolvingProcedure1(gridTemp))
@@ -278,48 +306,72 @@ namespace JapanGames2
 					if (CheckFaultSolving(gridTemp))
 					{
 						grid[minCand_i, minCand_j].SetAvailableCandidate(currentCandIndex.Value, 0);
+						
 						isSolvingProgress = true;
+						
 						myIneffectiveCandidates.Clear();
+						
 						break;
 					}
+					
+					if (CheckCompleteSolving(gridTemp))
+                    {
+						for (byte i = 0; i < 9; i++)
+                        {
+							for (byte j = 0; j < 9; j++)
+                            {
+								if (!mySudokuCells[i, j].SolveResult.HasValue)
+                                {
+									mySudokuCells[i, j].SolveResult = gridTemp[i, j].SolveResult;
+                                }
+                            }
+                        }
 
+						isSolvingProgress = true;
+
+						break;
+                    }
+					
 					if (!isHaveTempGridProgress)
                     {
-						myIneffectiveCandidates.Add(new MyIneffectiveSubstitutionCandidate(minCand_i, minCand_j, currentCandIndex.Value));
+						myIneffectiveCandidates.Add(new MySubstitutionCandidate(minCand_i, minCand_j, currentCandIndex.Value));
+						
 						isSolvingProgress = true;
 					}
 				}
 
+			if (isSolvingProgress) MethodWorkedWithProgress?.Invoke(6);
+
 			return isSolvingProgress;
 		}
-				
-		private bool SolvingProcedure5(MySudokuCell[,] grid) //Связанные пары (бабочка)
-        {
-			bool isSolvingProgress = false;
 
+		private bool SolvingProcedure5(MySudokuCell[,] grid) //Связанные пары (бабочка)
+		{
+			bool isSolvingProgress = false;
+			
 			//Проходим по кандидатам
 			for (byte candidate = 0; candidate < 9; candidate++)
-            {
+			{
 				//Ищем пару кандидатов в строках
 				for (byte i = 0; i < 9; i++)
-                {
+				{
 					List<byte> indexCells = new List<byte>();
 
 					//Проходим по ячейкам и записываем индексы кандидатов
 					for (byte k = 0; k < 9; k++)
-                    {
+					{
 						if (!grid[i, k].SolveResult.HasValue && grid[i, k].GetAvailableCandidate(candidate) != 0)
-                        {
+						{
 							indexCells.Add(k);
 						}
-                    }
+					}
 
 					//Если в списке пара кандидатов, то ищем для неё параллельную пару 
 					if (indexCells.Count == 2)
-                    {
+					{
 						//Блок поиска пар для удаления невозможных кандидатов в столбах
 						for (byte i_ = (byte)(i + 1); i_ < 9; i_++)
-                        {
+						{
 							List<byte> indexCells_ = new List<byte>();
 
 							//Проходим по ячейкам и записываем индексы кандидатов для проверки совпадения
@@ -330,39 +382,43 @@ namespace JapanGames2
 									indexCells_.Add(k);
 								}
 							}
-							
+
 							//Если две параллельные пары совпадают, то удаляем кандидата из столбов
-							if (indexCells_.Count == 2) 
-								if (indexCells[0] == indexCells_[0] && indexCells[1] == indexCells_[1]) 
+							if (indexCells_.Count == 2)
+								
+								if (indexCells[0] == indexCells_[0] && indexCells[1] == indexCells_[1])
+									
 									for (byte x = 0; x < 9; x++)
-                                    {
+									{
 										if (x != i && x != i_)
-                                        {
+										{
 											foreach (byte cell in indexCells)
-                                            {
+											{
 												if (grid[x, cell].GetAvailableCandidate(candidate) != 0
 													&& !grid[x, cell].SolveResult.HasValue)
-                                                {
+												{
 													grid[x, cell].SetAvailableCandidate(candidate, 0);
+													
 													isSolvingProgress = true;
 												}
-                                            }
-                                        }
-                                    }
+											}
+										}
+									}
 
 						}
 
 						//Блок поиска пар для удаления невозможных кандидатов в квадратах
 
 						//Если пара относится к разным квадратам, то исследуем дальше
-						if (indexCells[0] / 3 != indexCells[1] / 3) 
+						if (indexCells[0] / 3 != indexCells[1] / 3)
+							
 							//Интересуют только области рассматриваемых квадратов
 							for (byte i_ = (byte)((i / 3) * 3); i_ < (byte)((i / 3) * 3 + 3); i_++)
-                            {
+							{
 								List<byte> indexCells_ = new List<byte>();
 
 								if (i != i_)
-                                {
+								{
 									for (byte k = 0; k < 9; k++)
 									{
 										if (!grid[i_, k].SolveResult.HasValue && grid[i_, k].GetAvailableCandidate(candidate) != 0)
@@ -373,9 +429,13 @@ namespace JapanGames2
 
 									//Если две обнаруженные пары удовлетворяют условиям, то удаляем кандидата из квадратов
 									if (indexCells_.Count == 2)
+										
 										if (indexCells[0] / 3 == indexCells_[0] / 3 && indexCells[1] / 3 == indexCells_[1] / 3)
-											for (byte i_line = (byte)((i / 3) * 3); i_line < (byte)((i / 3) * 3 + 3); i_line++) 
+										
+											for (byte i_line = (byte)((i / 3) * 3); i_line < (byte)((i / 3) * 3 + 3); i_line++)
+												
 												if (i_line != i_ && i_line != i)
+													
 													for (byte x = 0; x < 9; x++)
 													{
 														if ((x / 3 == indexCells[0] / 3 || x / 3 == indexCells[1] / 3) && !grid[i_line, x].SolveResult.HasValue)
@@ -383,6 +443,7 @@ namespace JapanGames2
 															if (grid[i_line, x].GetAvailableCandidate(candidate) != 0)
 															{
 																grid[i_line, x].SetAvailableCandidate(candidate, 0);
+																
 																isSolvingProgress = true;
 															}
 														}
@@ -425,7 +486,9 @@ namespace JapanGames2
 
 							//Если две параллельные пары совпадают, то удаляем кандидата из строк
 							if (indexCells_.Count == 2)
+								
 								if (indexCells[0] == indexCells_[0] && indexCells[1] == indexCells_[1])
+									
 									for (byte x = 0; x < 9; x++)
 									{
 										if (x != j && x != j_)
@@ -436,6 +499,7 @@ namespace JapanGames2
 													&& !grid[cell, x].SolveResult.HasValue)
 												{
 													grid[cell, x].SetAvailableCandidate(candidate, 0);
+													
 													isSolvingProgress = true;
 												}
 											}
@@ -448,6 +512,7 @@ namespace JapanGames2
 
 						//Если пара относится к разным квадратам, то исследуем дальше
 						if (indexCells[0] / 3 != indexCells[1] / 3)
+							
 							//Интересуют только области рассматриваемых квадратов
 							for (byte j_ = (byte)((j / 3) * 3); j_ < (byte)((j / 3) * 3 + 3); j_++)
 							{
@@ -465,9 +530,13 @@ namespace JapanGames2
 
 									//Если две обнаруженные пары удовлетворяют условиям, то удаляем кандидата из квадратов
 									if (indexCells_.Count == 2)
+										
 										if (indexCells[0] / 3 == indexCells_[0] / 3 && indexCells[1] / 3 == indexCells_[1] / 3)
+											
 											for (byte j_line = (byte)((j / 3) * 3); j_line < (byte)((j / 3) * 3 + 3); j_line++)
+												
 												if (j_line != j_ && j_line != j)
+													
 													for (byte x = 0; x < 9; x++)
 													{
 														if ((x / 3 == indexCells[0] / 3 || x / 3 == indexCells[1] / 3) && !grid[x, j_line].SolveResult.HasValue)
@@ -475,6 +544,7 @@ namespace JapanGames2
 															if (grid[x, j_line].GetAvailableCandidate(candidate) != 0)
 															{
 																grid[x, j_line].SetAvailableCandidate(candidate, 0);
+																
 																isSolvingProgress = true;
 															}
 														}
@@ -486,14 +556,15 @@ namespace JapanGames2
 
 				//Ищем пару кандидатов в квадратах
 				for (byte i = 0; i < 3; i++)
+					
 					for (byte j = 0; j < 3; j++)
-                    {
+					{
 						List<byte> indexCells = new List<byte>();
 
 						//Проходим по ячейкам квадрата и записываем индексы кандидатов
 						for (byte k = 0; k < 9; k++)
 						{
-							if (!grid[i * 3 + k / 3, j * 3 + k % 3].SolveResult.HasValue 
+							if (!grid[i * 3 + k / 3, j * 3 + k % 3].SolveResult.HasValue
 								&& grid[i * 3 + k / 3, j * 3 + k % 3].GetAvailableCandidate(candidate) != 0)
 							{
 								indexCells.Add(k);
@@ -502,20 +573,21 @@ namespace JapanGames2
 
 						//Если в списке пара кандидатов, то ищем пару в другом квадрате
 						if (indexCells.Count == 2)
-                        {
+						{
 							for (byte i_ = 0; i_ < 3; i_++)
+								
 								for (byte j_ = 0; j_ < 3; j_++)
-                                {
+								{
 									if (i != i_ && j != j_)
-                                    {
+									{
 										if ((i == i_ && j != j_) || (i != i_ && j == j_))
-                                        {
+										{
 											List<byte> indexCells_ = new List<byte>();
 
 											//Проходим по ячейкам и записываем индексы кандидатов для проверки совпадения
 											for (byte k = 0; k < 9; k++)
 											{
-												if (!grid[i_ * 3 + k / 3, j_ * 3 + k % 3].SolveResult.HasValue 
+												if (!grid[i_ * 3 + k / 3, j_ * 3 + k % 3].SolveResult.HasValue
 													&& grid[i_ * 3 + k / 3, j_ * 3 + k % 3].GetAvailableCandidate(candidate) != 0)
 												{
 													indexCells_.Add(k);
@@ -524,12 +596,15 @@ namespace JapanGames2
 
 											//Если две обнаруженные пары удовлетворяют условиям
 											if (indexCells_.Count == 2)
-                                            {
+											{
 												//, то удаляем кандидата из строк
 												if (i == i_)
+													
 													if (indexCells[0] / 3 != indexCells[1] / 3)
+														
 														if ((indexCells[0] / 3 == indexCells_[0] / 3 && indexCells[1] / 3 == indexCells_[1] / 3)
 															|| (indexCells[0] / 3 == indexCells_[1] / 3 && indexCells[1] / 3 == indexCells_[0] / 3))
+															
 															for (byte x = 0; x < 9; x++)
 															{
 																if (x / 3 != j && x / 3 != j_)
@@ -540,6 +615,7 @@ namespace JapanGames2
 																			&& !grid[i * 3 + cell / 3, x].SolveResult.HasValue)
 																		{
 																			grid[i * 3 + cell / 3, x].SetAvailableCandidate(candidate, 0);
+																			
 																			isSolvingProgress = true;
 																		}
 																	}
@@ -548,9 +624,12 @@ namespace JapanGames2
 
 												//, то удаляем кандидата из столбов
 												if (j == j_)
+													
 													if (indexCells[0] % 3 != indexCells[1] % 3)
+														
 														if ((indexCells[0] % 3 == indexCells_[0] % 3 && indexCells[1] % 3 == indexCells_[1] % 3)
 															|| (indexCells[0] % 3 == indexCells_[1] % 3 && indexCells[1] % 3 == indexCells_[0] % 3))
+															
 															for (byte x = 0; x < 9; x++)
 															{
 																if (x / 3 != i && x / 3 != i_)
@@ -561,6 +640,7 @@ namespace JapanGames2
 																			&& !grid[x, j * 3 + cell % 3].SolveResult.HasValue)
 																		{
 																			grid[x, j * 3 + cell % 3].SetAvailableCandidate(candidate, 0);
+																			
 																			isSolvingProgress = true;
 																		}
 																	}
@@ -568,12 +648,14 @@ namespace JapanGames2
 															}
 											}
 										}
-                                    }
-                                }
+									}
+								}
 						}
 					}
 			}
 
+			if (isSolvingProgress) MethodWorkedWithProgress?.Invoke(5);
+			
 			return isSolvingProgress;
 		}
 
@@ -586,11 +668,17 @@ namespace JapanGames2
 			{
 				//Выясняем размер максимально возможной группы кандидатов
 				byte counter = 0;
+				
 				for (byte k = 0; k < 9; k++) if (!grid[i, k].SolveResult.HasValue) counter++;
+				
 				byte maxSize = 0;
+				
 				if (counter > 3)
+					
 					if (counter % 2 == 0) //Имеет смысл искать скрытые кандидаты с размером группы меньше половины неизвестных клеток
+						
 						maxSize = (byte)(counter / 2 - 1);
+					
 					else maxSize = (byte)(counter / 2);
 
 				//Ищем группы кандидатов начиная от размера группы в 2е клетки
@@ -630,9 +718,11 @@ namespace JapanGames2
 							if (arrayIndexCells[candidateBase] != null)
                             {
 								List<byte> indexCellsOfGroup;
+								
 								List<byte> correctCandidateMembers = new List<byte>();
 
 								indexCellsOfGroup = arrayIndexCells[candidateBase];
+								
 								correctCandidateMembers.Add(candidateBase);
 
 								//Проходим по кандидатам и при удовлетворении условий добавляем их в группу
@@ -641,6 +731,7 @@ namespace JapanGames2
 									if (candidateBase != candidateCheck && arrayIndexCells[candidateCheck] != null)
                                     {
 										bool isCorrectMember = false;
+										
 										byte correctCandidates = 0;
 
 										//Проверяем совпадение индексов ячеек у проверяемых кандмдатов
@@ -651,11 +742,13 @@ namespace JapanGames2
 												if (indexCellsOfGroup.Count < sizeGroup)
 												{
 													indexCellsOfGroup.Add(indexCell);
+													
 													correctCandidates++;
 												}
 												else
 												{
 													isCorrectMember = false;
+													
 													break;
 												}
 											}
@@ -686,6 +779,7 @@ namespace JapanGames2
 												if (grid[i, index].GetAvailableCandidate(k) != 0)
 												{
 													grid[i, index].SetAvailableCandidate(k, 0);
+													
 													isSolvingProgress = true;
 												}
 											}
@@ -703,11 +797,17 @@ namespace JapanGames2
 			{
 				//Выясняем размер максимально возможной группы кандидатов
 				byte counter = 0;
+				
 				for (byte k = 0; k < 9; k++) if (!grid[k, j].SolveResult.HasValue) counter++;
+				
 				byte maxSize = 0;
+				
 				if (counter > 3)
+					
 					if (counter % 2 == 0) //Имеет смысл искать скрытые кандидаты с размером группы меньше половины неизвестных клеток
+						
 						maxSize = (byte)(counter / 2 - 1);
+					
 					else maxSize = (byte)(counter / 2);
 
 				//Ищем группы кандидатов начиная от размера группы в 2е клетки
@@ -747,9 +847,11 @@ namespace JapanGames2
 							if (arrayIndexCells[candidateBase] != null)
 							{
 								List<byte> indexCellsOfGroup;
+								
 								List<byte> correctCandidateMembers = new List<byte>();
 
 								indexCellsOfGroup = arrayIndexCells[candidateBase];
+								
 								correctCandidateMembers.Add(candidateBase);
 
 								//Проходим по кандидатам и при удовлетворении условий добавляем их в группу
@@ -758,6 +860,7 @@ namespace JapanGames2
 									if (candidateBase != candidateCheck && arrayIndexCells[candidateCheck] != null)
 									{
 										bool isCorrectMember = false;
+										
 										byte correctCandidates = 0;
 
 										//Проверяем совпадение индексов ячеек у проверяемых кандмдатов
@@ -768,11 +871,13 @@ namespace JapanGames2
 												if (indexCellsOfGroup.Count < sizeGroup)
 												{
 													indexCellsOfGroup.Add(indexCell);
+													
 													correctCandidates++;
 												}
 												else
 												{
 													isCorrectMember = false;
+													
 													break;
 												}
 											}
@@ -803,6 +908,7 @@ namespace JapanGames2
 												if (grid[index, j].GetAvailableCandidate(k) != 0)
 												{
 													grid[index, j].SetAvailableCandidate(k, 0);
+													
 													isSolvingProgress = true;
 												}
 											}
@@ -822,11 +928,17 @@ namespace JapanGames2
                 {
 					//Выясняем размер максимально возможной группы кандидатов
 					byte counter = 0;
+					
 					for (byte k = 0; k < 9; k++) if (!grid[i * 3 + k / 3, j * 3 + k % 3].SolveResult.HasValue) counter++;
+					
 					byte maxSize = 0;
+					
 					if (counter > 3)
+						
 						if (counter % 2 == 0) //Имеет смысл искать скрытые кандидаты с размером группы меньше половины неизвестных клеток
+							
 							maxSize = (byte)(counter / 2 - 1);
+
 						else maxSize = (byte)(counter / 2);
 
 					//Ищем группы кандидатов начиная от размера группы в 2е клетки
@@ -866,9 +978,11 @@ namespace JapanGames2
 								if (arrayIndexCells[candidateBase] != null)
 								{
 									List<byte> indexCellsOfGroup;
+									
 									List<byte> correctCandidateMembers = new List<byte>();
 
 									indexCellsOfGroup = arrayIndexCells[candidateBase];
+									
 									correctCandidateMembers.Add(candidateBase);
 
 									//Проходим по кандидатам и при удовлетворении условий добавляем их в группу
@@ -877,6 +991,7 @@ namespace JapanGames2
 										if (candidateBase != candidateCheck && arrayIndexCells[candidateCheck] != null)
 										{
 											bool isCorrectMember = false;
+											
 											byte correctCandidates = 0;
 
 											//Проверяем совпадение индексов ячеек у проверяемых кандмдатов
@@ -887,11 +1002,13 @@ namespace JapanGames2
 													if (indexCellsOfGroup.Count < sizeGroup)
 													{
 														indexCellsOfGroup.Add(indexCell);
+														
 														correctCandidates++;
 													}
 													else
 													{
 														isCorrectMember = false;
+														
 														break;
 													}
 												}
@@ -922,6 +1039,7 @@ namespace JapanGames2
 													if (grid[i * 3 + index / 3, j * 3 + index % 3].GetAvailableCandidate(k) != 0)
 													{
 														grid[i * 3 + index / 3, j * 3 + index % 3].SetAvailableCandidate(k, 0);
+														
 														isSolvingProgress = true;
 													}
 												}
@@ -935,6 +1053,8 @@ namespace JapanGames2
 				}
 			}
 
+			if (isSolvingProgress) MethodWorkedWithProgress?.Invoke(4);
+
 			return isSolvingProgress;
 		}
 
@@ -947,7 +1067,9 @@ namespace JapanGames2
             {
 				//Выясняем размер максимально возможной группы кандидатов
 				byte counter = 0;
+				
 				for (byte k = 0; k < 9; k++) if (!grid[i, k].SolveResult.HasValue) counter++;
+				
 				byte maxSize = counter--;
 
 				//Ищем группы кандидатов начиная от размера группы в 2е клетки
@@ -961,11 +1083,13 @@ namespace JapanGames2
 							if (grid[i, j].CountAvailableCandidates <= sizeGroup && !grid[i, j].SolveResult.HasValue)
                             {
 								List<byte> memberPositions = new List<byte>();
+								
 								List<byte> digitsInGroup = new List<byte>();
 
 								//Сохраняем сведения основной ячейки
 								memberPositions.Add(j);
 								for (byte k = 0; k < 9; k++)
+									
 									if (grid[i, j].GetAvailableCandidate(k) != 0) digitsInGroup.Add(grid[i, j].GetAvailableCandidate(k));
 
 								//Ищем подходящие ячейки для группы
@@ -974,6 +1098,7 @@ namespace JapanGames2
 									if (j != k && !grid[i, k].SolveResult.HasValue && grid[i, k].CountAvailableCandidates <= sizeGroup)
                                     {
 										bool isCorrectMember = false;
+										
 										byte correctCandidates = 0;
 										
 										//Проверяем условия соответствия кандидатов для группы
@@ -986,11 +1111,13 @@ namespace JapanGames2
 													if (digitsInGroup.Count < sizeGroup)
                                                     {
 														digitsInGroup.Add(grid[i, k].GetAvailableCandidate(x));
+														
 														correctCandidates++;
 													}
 													else
                                                     {
 														isCorrectMember = false;
+														
 														break;
 													} 
 												}
@@ -1022,6 +1149,7 @@ namespace JapanGames2
 												if (grid[i, k].GetAvailableCandidate((byte)(digit - 1)) != 0)
                                                 {
 													grid[i, k].SetAvailableCandidate((byte)(digit - 1), 0);
+													
 													isSolvingProgress = true;
 												}
 											}
@@ -1039,7 +1167,9 @@ namespace JapanGames2
 			{
 				//Выясняем размер максимально возможной группы кандидатов
 				byte counter = 0;
+				
 				for (byte k = 0; k < 9; k++) if (!grid[k, j].SolveResult.HasValue) counter++;
+				
 				byte maxSize = counter--;
 
 				//Ищем группы кандидатов начиная от размера группы в 2е клетки
@@ -1053,11 +1183,13 @@ namespace JapanGames2
 							if (grid[i, j].CountAvailableCandidates <= sizeGroup && !grid[i, j].SolveResult.HasValue)
 							{
 								List<byte> memberPositions = new List<byte>();
+								
 								List<byte> digitsInGroup = new List<byte>();
 
 								//Сохраняем сведения основной ячейки
 								memberPositions.Add(i);
 								for (byte k = 0; k < 9; k++)
+									
 									if (grid[i, j].GetAvailableCandidate(k) != 0) digitsInGroup.Add(grid[i, j].GetAvailableCandidate(k));
 
 								//Ищем подходящие ячейки для группы
@@ -1066,6 +1198,7 @@ namespace JapanGames2
 									if (i != k && !grid[k, j].SolveResult.HasValue && grid[k, j].CountAvailableCandidates <= sizeGroup)
 									{
 										bool isCorrectMember = false;
+										
 										byte correctCandidates = 0;
 
 										//Проверяем условия соответствия кандидатов для группы
@@ -1078,11 +1211,13 @@ namespace JapanGames2
 													if (digitsInGroup.Count < sizeGroup)
 													{
 														digitsInGroup.Add(grid[k, j].GetAvailableCandidate(x));
+														
 														correctCandidates++;
 													}
 													else
 													{
 														isCorrectMember = false;
+														
 														break;
 													}
 												}
@@ -1114,6 +1249,7 @@ namespace JapanGames2
 												if (grid[k, j].GetAvailableCandidate((byte)(digit - 1)) != 0)
 												{
 													grid[k, j].SetAvailableCandidate((byte)(digit - 1), 0);
+													
 													isSolvingProgress = true;
 												}
 											}
@@ -1133,7 +1269,9 @@ namespace JapanGames2
 				{
 					//Выясняем размер максимально возможной группы кандидатов
 					byte counter = 0;
+					
 					for (byte k = 0; k < 9; k++) if (!grid[i * 3 + k / 3, j * 3 + k % 3].SolveResult.HasValue) counter++;
+					
 					byte maxSize = counter--;
 
 					//Ищем группы кандидатов начиная от размера группы в 2е клетки
@@ -1147,11 +1285,14 @@ namespace JapanGames2
 								if (grid[i * 3 + n / 3, j * 3 + n % 3].CountAvailableCandidates <= sizeGroup && !grid[i * 3 + n / 3, j * 3 + n % 3].SolveResult.HasValue)
 								{
 									List<byte> memberPositions = new List<byte>();
+									
 									List<byte> digitsInGroup = new List<byte>();
 
 									//Сохраняем сведения основной ячейки
 									memberPositions.Add(n);
+
 									for (byte k = 0; k < 9; k++)
+										
 										if (grid[i * 3 + n / 3, j * 3 + n % 3].GetAvailableCandidate(k) != 0) digitsInGroup.Add(grid[i * 3 + n / 3, j * 3 + n % 3].GetAvailableCandidate(k));
 
 									//Ищем подходящие ячейки для группы
@@ -1160,6 +1301,7 @@ namespace JapanGames2
 										if (n != k && !grid[i * 3 + k / 3, j * 3 + k % 3].SolveResult.HasValue && grid[i * 3 + k / 3, j * 3 + k % 3].CountAvailableCandidates <= sizeGroup)
 										{
 											bool isCorrectMember = false;
+											
 											byte correctCandidates = 0;
 
 											//Проверяем условия соответствия кандидатов для группы
@@ -1172,11 +1314,13 @@ namespace JapanGames2
 														if (digitsInGroup.Count < sizeGroup)
 														{
 															digitsInGroup.Add(grid[i * 3 + k / 3, j * 3 + k % 3].GetAvailableCandidate(x));
+															
 															correctCandidates++;
 														}
 														else
 														{
 															isCorrectMember = false;
+															
 															break;
 														}
 													}
@@ -1208,6 +1352,7 @@ namespace JapanGames2
 													if (grid[i * 3 + k / 3, j * 3 + k % 3].GetAvailableCandidate((byte)(digit - 1)) != 0)
 													{
 														grid[i * 3 + k / 3, j * 3 + k % 3].SetAvailableCandidate((byte)(digit - 1), 0);
+														
 														isSolvingProgress = true;
 													}
 												}
@@ -1220,14 +1365,16 @@ namespace JapanGames2
 					}
 				}
 			}
-			
+
+			if (isSolvingProgress) MethodWorkedWithProgress?.Invoke(3);
+
 			return isSolvingProgress;
 		}
 
 		private bool SolvingProcedure2(MySudokuCell[,] grid) //Исключение кандидатов
 		{
 			bool isSolvingProgress = false;
-
+						
 			//Исключаем очевидно парных кандидатов квадратов из строк и столбов
 			for (byte i = 0; i < 3; i++)
 			{
@@ -1236,6 +1383,7 @@ namespace JapanGames2
 					for (byte num = 0; num < 9; num++)
 					{
 						byte countNumbers = 0;
+
 						byte pos1 = 0, pos2 = 0;
 
 						for (byte k = 0; k < 9; k++)
@@ -1244,7 +1392,9 @@ namespace JapanGames2
 							&& grid[i * 3 + (k / 3), j * 3 + (k % 3)].GetAvailableCandidate(num) != 0)
 							{
 								countNumbers++;
+
 								if (countNumbers == 1) { pos1 = k; }
+
 								if (countNumbers == 2) { pos2 = k; }
 							}
 						}
@@ -1254,11 +1404,13 @@ namespace JapanGames2
 							if (pos1 % 3 == pos2 % 3)
 							{
 								for (byte x = 0; x < 9; x++)
+
 									if (!grid[x, j * 3 + (pos1 % 3)].SolveResult.HasValue && x / 3 != i)
                                     {
 										if (grid[x, j * 3 + (pos1 % 3)].GetAvailableCandidate(num) != 0)
                                         {
-											grid[x, j * 3 + (pos1 % 3)].SetAvailableCandidate(num, 0);
+											grid[x, j * 3 + (pos1 % 3)].SetAvailableCandidateLiteForProc2(num, 0);
+											
 											isSolvingProgress = true;
 										}
 									}
@@ -1266,11 +1418,13 @@ namespace JapanGames2
 							if (pos1 / 3 == pos2 / 3)
 							{
 								for (byte x = 0; x < 9; x++)
+
 									if (!grid[i * 3 + (pos1 / 3), x].SolveResult.HasValue && x / 3 != j)
                                     {
 										if (grid[i * 3 + (pos1 / 3), x].GetAvailableCandidate(num) != 0)
                                         {
-											grid[i * 3 + (pos1 / 3), x].SetAvailableCandidate(num, 0);
+											grid[i * 3 + (pos1 / 3), x].SetAvailableCandidateLiteForProc2(num, 0);
+											
 											isSolvingProgress = true;
 										}
 									}
@@ -1286,6 +1440,7 @@ namespace JapanGames2
 				for (byte num = 0; num < 9; num++)
 				{
 					byte countNumbers = 0;
+
 					byte pos1 = 0, pos2 = 0;
 
 					for (byte k = 0; k < 9; k++)
@@ -1294,7 +1449,9 @@ namespace JapanGames2
 							&& grid[i, k].GetAvailableCandidate(num) != 0)
 						{
 							countNumbers++;
+
 							if (countNumbers == 1) { pos1 = k; }
+
 							if (countNumbers == 2) { pos2 = k; }
 						}
 					}
@@ -1304,11 +1461,13 @@ namespace JapanGames2
 						if (pos1 / 3 == pos2 / 3)
 						{
 							for (byte x = 0; x < 9; x++)
+
 								if (!grid[i / 3 * 3 + x / 3, pos1 / 3 * 3 + x % 3].SolveResult.HasValue && i % 3 != x / 3)
                                 {
 									if (grid[i / 3 * 3 + x / 3, pos1 / 3 * 3 + x % 3].GetAvailableCandidate(num) != 0)
                                     {
-										grid[i / 3 * 3 + x / 3, pos1 / 3 * 3 + x % 3].SetAvailableCandidate(num, 0);
+										grid[i / 3 * 3 + x / 3, pos1 / 3 * 3 + x % 3].SetAvailableCandidateLiteForProc2(num, 0);
+										
 										isSolvingProgress = true;
 									}
 								}
@@ -1317,12 +1476,14 @@ namespace JapanGames2
 					}
 				}
 			}
+
 			//Исключаем очевидно парных кандидатов столба из квадрата
 			for (byte j = 0; j < 9; j++)
 			{
 				for (byte num = 0; num < 9; num++)
 				{
 					byte countNumbers = 0;
+
 					byte pos1 = 0, pos2 = 0;
 
 					for (byte k = 0; k < 9; k++)
@@ -1331,7 +1492,9 @@ namespace JapanGames2
 							&& grid[k, j].GetAvailableCandidate(num) != 0)
 						{
 							countNumbers++;
+
 							if (countNumbers == 1) { pos1 = k; }
+
 							if (countNumbers == 2) { pos2 = k; }
 						}
 					}
@@ -1341,11 +1504,13 @@ namespace JapanGames2
 						if (pos1 / 3 == pos2 / 3)
 						{
 							for (byte x = 0; x < 9; x++)
+
 								if (!grid[pos1 / 3 * 3 + x / 3, j / 3 * 3 + x % 3].SolveResult.HasValue && j % 3 != x % 3)
                                 {
 									if (grid[pos1 / 3 * 3 + x / 3, j / 3 * 3 + x % 3].GetAvailableCandidate(num) != 0)
                                     {
-										grid[pos1 / 3 * 3 + x / 3, j / 3 * 3 + x % 3].SetAvailableCandidate(num, 0);
+										grid[pos1 / 3 * 3 + x / 3, j / 3 * 3 + x % 3].SetAvailableCandidateLiteForProc2(num, 0);
+										
 										isSolvingProgress = true;
 									}
 								}
@@ -1354,6 +1519,16 @@ namespace JapanGames2
 					}
 				}
 			}
+
+			for (int i = 0; i < 9; i++)
+			{
+				for (int j = 0; j < 9; j++)
+				{
+					grid[i, j].CheckSingleCandidate();
+				}
+			}
+
+			if (isSolvingProgress) MethodWorkedWithProgress?.Invoke(2);
 
 			return isSolvingProgress;
 		}
@@ -1366,7 +1541,6 @@ namespace JapanGames2
 			{
 				for (byte j = 0; j < 9; j++)
 				{
-
 					//Убираем невозможных кандидатов с поля
 					if (grid[i, j].SolveResult.HasValue)
 					{
@@ -1378,6 +1552,7 @@ namespace JapanGames2
 								if (grid[i, k].GetAvailableCandidate((byte)(grid[i, j].SolveResult.Value - 1)) != 0)
                                 {
 									grid[i, k].SetAvailableCandidate((byte)(grid[i, j].SolveResult.Value - 1), 0);
+
 									isSolvingProgress = true;
 								}
 							}
@@ -1391,11 +1566,12 @@ namespace JapanGames2
 								if (grid[k, j].GetAvailableCandidate((byte)(grid[i, j].SolveResult.Value - 1)) != 0)
                                 {
 									grid[k, j].SetAvailableCandidate((byte)(grid[i, j].SolveResult.Value - 1), 0);
+									
 									isSolvingProgress = true;
 								}
 							}
 						}
-
+						
 						//Проходим по квадрату
 						for (byte k = 0; k < 9; k++)
 						{
@@ -1404,6 +1580,7 @@ namespace JapanGames2
 								if (grid[i / 3 * 3 + k / 3, j / 3 * 3 + k % 3].GetAvailableCandidate((byte)(grid[i, j].SolveResult.Value - 1)) != 0)
                                 {
 									grid[i / 3 * 3 + k / 3, j / 3 * 3 + k % 3].SetAvailableCandidate((byte)(grid[i, j].SolveResult.Value - 1), 0);
+									
 									isSolvingProgress = true;
 								}
 							}
@@ -1427,9 +1604,11 @@ namespace JapanGames2
 								}
 							}
 							if (countNotAvailableCandidates == 8)
-							{
+							{								
 								grid[i, j].SolveResult = (byte)(num + 1);
+								
 								isSolvingProgress = true;
+								
 								break;
 							}
 						}
@@ -1449,15 +1628,18 @@ namespace JapanGames2
 							if (countNotAvailableCandidates == 8)
 							{
 								grid[i, j].SolveResult = (byte)(num + 1);
+								
 								isSolvingProgress = true;
+								
 								break;
 							}
 						}
-
+						
 						//Проходим по квадрату
 						for (byte num = 0; num < 9; num++)
 						{
 							byte countNotAvailableCandidates = 0;
+
 							for (byte k = 0; k < 9; k++)
 							{
 								if (i != (i / 3 * 3 + k / 3) || j != (j / 3 * 3 + k % 3))
@@ -1468,7 +1650,9 @@ namespace JapanGames2
 							if (countNotAvailableCandidates == 8)
 							{
 								grid[i, j].SolveResult = (byte)(num + 1);
+								
 								isSolvingProgress = true;
+								
 								break;
 							}
 						}
@@ -1476,13 +1660,9 @@ namespace JapanGames2
 				}
 			}
 
+			if (isSolvingProgress) MethodWorkedWithProgress?.Invoke(1);
+
 			return isSolvingProgress;
 		}
-
-
-
-
 	}
-
-
 }

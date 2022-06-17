@@ -38,16 +38,23 @@ namespace JapanGames2
 
 			set
 			{
-				solveResult = value;
-				if (value.HasValue) ClearCandidates(SolveResult.Value);
-				else ReplaceCandidates();
+				if (value == 0 || !value.HasValue)
+                {
+					solveResult = null;
+					ReplaceCandidates();
+				}
+				else if (value >= 1 && value <= 9)
+                {
+					solveResult = value;
+					ClearCandidates(solveResult.Value);
+				}
 			}
 		}
 
 		public MySudokuCell(byte? digit = null)
 		{
 			if (digit != 0) solveResult = digit;
-			else SolveResult = null;
+			else solveResult = null;
 			if (solveResult.HasValue) ClearCandidates(solveResult.Value);
 		}
 
@@ -84,8 +91,15 @@ namespace JapanGames2
 			CheckSingleCandidate();
 		}
 
+		public void SetAvailableCandidateLiteForProc2(byte index, byte value)
+		{
+			availableCandidates[index] = value;
+			RefreshCountAvailableCandidates();
+			//CheckSingleCandidate(); - ломает работу 2 процедуры решения
+		}
+
 		//Проверка на единственного кандидата
-		private void CheckSingleCandidate()
+		public void CheckSingleCandidate()
 		{
 			byte counterCandidates = 0;
 			byte lastCandidate = 0;
@@ -118,8 +132,9 @@ namespace JapanGames2
 		{
 			for (byte i = 0; i < 9; i++)
 			{
-				if (i != digit - 1)
-					availableCandidates[i] = 0;
+				if (i != digit - 1) availableCandidates[i] = 0;
+
+				else availableCandidates[i] = digit;
 			}
 			RefreshCountAvailableCandidates();
 		}
