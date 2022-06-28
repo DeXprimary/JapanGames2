@@ -5,13 +5,13 @@ using Xamarin.Forms;
 
 namespace JapanGames2
 {
-    public class MySudokuGrid
-    {
+	public class MySudokuGrid
+	{
 		public delegate void MethodCallback(int methodID);
 
 		public event MethodCallback MethodWorkedWithProgress = delegate { };
 
-        private struct MySubstitutionCandidate
+		private struct MySubstitutionCandidate
 		{
 			public byte i, j, candidate;
 			public MySubstitutionCandidate(byte i_Index, byte j_Index, byte candidateIndex)
@@ -80,7 +80,10 @@ namespace JapanGames2
 					mySudokuCells[i, j].SolveResult = grid[i, j];
 				}
 			}
-			CheckCompleteSolving(mySudokuCells);
+
+			isSolved = false;
+
+			myIneffectiveCandidates.Clear();
 		}
 
 		public bool SetValueCell(byte value, byte i, byte j)
@@ -96,11 +99,6 @@ namespace JapanGames2
 			return resultOperation;
         }
 
-		public virtual bool TryCleanInvalidCandidate()
-        {
-			return SolvingProcedure1(mySudokuCells);
-		}
-
 		public bool CheckGridForFault()
         {
 			return CheckFaultSolving(mySudokuCells);
@@ -115,7 +113,7 @@ namespace JapanGames2
 			while (hasProgress && !isSolved)
 			{				
 				if (difficulty < 1) difficulty = 1;
-				
+
 				if (!SolvingProcedure1(mySudokuCells))
                 {
 					if (difficulty < 2) difficulty = 2;
@@ -146,8 +144,10 @@ namespace JapanGames2
 						}
 					}
 				}
-				CheckCompleteSolving(mySudokuCells);								
+
+				CheckCompleteSolving(mySudokuCells);
 			}
+
 			return difficulty;
 		}
 
@@ -162,6 +162,7 @@ namespace JapanGames2
 					if (!grid[i, j].SolveResult.HasValue) countUnsolvedCells++;
 				}
 			}
+
 			if (countUnsolvedCells == 0) 
 			{
 				isSolved = true;
@@ -170,6 +171,7 @@ namespace JapanGames2
             {
 				isSolved = false;
 			}
+
 			return isSolved;
 		}
 

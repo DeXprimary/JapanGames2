@@ -72,18 +72,18 @@ namespace JapanGames2
         };
         */
         byte[,] beginCondition =
-        {   { 0, 5, 8, 9, 7, 0, 0, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 3 },
-            { 0, 0, 0, 8, 3, 5, 1, 0, 7 },
-            { 1, 4, 7, 0, 6, 0, 0, 3, 0 },
-            { 6, 8, 0, 3, 5, 0, 4, 7, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-            { 0, 0, 0, 5, 0, 7, 0, 0, 4 },
-            { 9, 7, 5, 1, 0, 2, 3, 0, 0 },
-            { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-        };
+        {   { 0, 7, 0, 0, 3, 0, 0, 5, 0 },
+            { 0, 0, 0, 0, 0, 0, 7, 0, 0 },
+            { 0, 3, 0, 0, 0, 4, 0, 0, 1 },
+            { 0, 4, 0, 0, 0, 1, 9, 0, 2 },
+            { 0, 0, 6, 0, 4, 0, 0, 0, 5 },
+            { 8, 0, 0, 0, 5, 6, 0, 0, 0 },
+            { 0, 1, 0, 0, 0, 0, 0, 0, 6 },
+            { 0, 0, 0, 0, 0, 5, 0, 0, 4 },
+            { 2, 0, 0, 0, 8, 0, 0, 0, 0 }
+        }; 
         
-        int[] tableWorkedMethods = new int[7] { 0, 0, 0, 0, 0, 0, 0};
+        int[] tableWorkedMethods = new int[5] { 0, 0, 0, 0, 0 };
 
         Random random = new Random();
 
@@ -105,9 +105,23 @@ namespace JapanGames2
 
         TapGestureRecognizer gestureTapNumPad = new TapGestureRecognizer();
 
+
+
         void OnMethodHadWorked(int methodID)
         {
-            tableWorkedMethods[methodID]++;
+            if (methodID == 3 || methodID == 4 || methodID == 5) tableWorkedMethods[3]++;
+
+            else if (methodID == 6) tableWorkedMethods[4]++; 
+
+            else tableWorkedMethods[methodID]++;
+        }
+
+        void ResetWorkedMetods()
+        {
+            for (int i = 0; i < tableWorkedMethods.Length; i++)
+            {
+                tableWorkedMethods[i] = 0;
+            }
         }
 
         async void OnClickedButtonSolveIt(object sender, EventArgs args)
@@ -257,95 +271,164 @@ namespace JapanGames2
         void OnClickedButtonNewGame(object sender, EventArgs args)
         {
 
-        }
+        }        
 
-        void SolvableMessage(byte asd)
+        int NewTrySolve()
         {
+            ResetWorkedMetods();
 
+            //mySudokuGrid = new MySudokuGrid(beginCondition);
+
+            //mySudokuGrid.MethodWorkedWithProgress += OnMethodHadWorked;
+
+            mySudokuGrid.SetNewGrid(beginCondition);
+
+            int diff = mySudokuGrid.TrySolve();
+            /*
+            foreach (var k in tableWorkedMethods) Console.Write(k.ToString() + " | ");
+
+            Console.WriteLine(" = " + diff);
+
+            debugLabel.Text = "!" + diff + "!" + "/n";
+
+            debugLabel2.Text = tableWorkedMethods[1] + "|" + tableWorkedMethods[2] + "|" +
+                               tableWorkedMethods[3] + "|" + tableWorkedMethods[4];
+
+            debugLabel3.Text = "Fault?:" + mySudokuGrid.CheckGridForFault();
+            */
+            return diff;
         }
 
         public PageSudoku(int targetDifficulty) : this()
         {
             MySudokuGridBuilder startField = new MySudokuGridBuilder();
 
-            Console.WriteLine("startField");
+            int currentPos;
 
+            List<int> cellsDone = new List<int>();
+            
+            //Вывод в консоль начального поля
+            Console.WriteLine("startField");
+                        
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
                     beginCondition[i, j] = startField[i, j].SolveResult.GetValueOrDefault(0);
 
-                    Console.Write("{0} ", beginCondition[i, j]);
+                    //Console.Write("{0} ", beginCondition[i, j]);
                 }
-                Console.WriteLine();
+                //Console.WriteLine();
             }
+            
+            //Подготовка поля для новой игры
 
-            bool isHaveBeginCondition = false;
-
-            for (int k = 0; k < targetDifficulty * 10 + 10; k++)
-            {
-                ChangeRandomMember(beginCondition, false);
-            }
-
-            mySudokuGrid.SetNewGrid(beginCondition);
-
-            int currentDifficulty = mySudokuGrid.TrySolve();
-
-            debugLabel.Text += "!" + currentDifficulty + "!" + "/n";
-
-            debugLabel2.Text = tableWorkedMethods[1] + "|" + tableWorkedMethods[2] + "|" +
-                               tableWorkedMethods[3] + "|" + tableWorkedMethods[4] + "|" +
-                               tableWorkedMethods[5] + "|" + tableWorkedMethods[6];
-
-            debugLabel3.Text = "Fault?:" + mySudokuGrid.CheckGridForFault();
-
+            int currentDifficulty = 1;
+            
             while (currentDifficulty != targetDifficulty)
             {
                 if (currentDifficulty == 0)
                 {
-                    ChangeRandomMember(beginCondition, true);
+                    ChangeRandomLikeMember(beginCondition, true, out int position);
                 }
                 else if (currentDifficulty < targetDifficulty)
                 {
-                    ChangeRandomMember(beginCondition, false);
-                }                
-                else if (currentDifficulty > targetDifficulty)
+                    ChangeRandomLikeMember(beginCondition, false, out int position);
+                }
+                else
                 {
-                    ChangeRandomMember(beginCondition, true);
-                }                
-                else break;
+                    if (tableWorkedMethods[targetDifficulty] == 0)
+                    {
+                        ChangeRandomLikeMember(beginCondition, false, out int position);
+                    }
+                    else
+                    {
+                        //Console.WriteLine("Worked " + tableWorkedMethods[targetDifficulty]);
 
-                mySudokuGrid.SetNewGrid(beginCondition);
+                        cellsDone.Clear();
 
-                currentDifficulty = mySudokuGrid.TrySolve();
+                        bool isNeedAdd = true;
 
-                //debugLabel.Text += currentDifficulty;
+                        do
+                        {
+                            currentPos = random.Next(0, 81);
 
-                debugLabel2.Text = tableWorkedMethods[1] + "|" + tableWorkedMethods[2] + "|" +
-                                   tableWorkedMethods[3] + "|" + tableWorkedMethods[4] + "|" +
-                                   tableWorkedMethods[5] + "|" + tableWorkedMethods[6];
+                            if (!cellsDone.Contains(currentPos))
+                            {
+                                if (beginCondition[currentPos / 9, currentPos % 9] == 0)
+                                {
+                                    beginCondition[currentPos / 9, currentPos % 9] = startField[currentPos / 9, currentPos % 9].SolveResult.GetValueOrDefault(0);
 
-                debugLabel3.Text = "Fault?:" + mySudokuGrid.CheckGridForFault();
+                                    currentDifficulty = NewTrySolve();
+
+                                    if (currentDifficulty == targetDifficulty) break;
+
+                                    if (tableWorkedMethods[targetDifficulty] == 0) beginCondition[currentPos / 9, currentPos % 9] = 0;
+
+                                    else isNeedAdd = false;
+                                }
+
+                                cellsDone.Add(currentPos);
+                            }
+                        }
+                        while (cellsDone.Count < 81);
+
+                        if (isNeedAdd) ChangeRandomLikeMember(beginCondition, true, out int position);
+
+                        //Console.WriteLine("Done" + tableWorkedMethods[targetDifficulty]);
+                    }
+                }
+
+                currentDifficulty = NewTrySolve();
             }
+
+            //Чистка поля от ненужных чисел
+            cellsDone.Clear();     
+
+            do
+            {
+                currentPos = random.Next(0, 81);
+
+                if (!cellsDone.Contains(currentPos))
+                {
+                    if (beginCondition[currentPos / 9, currentPos % 9] != 0)
+                    {
+                        beginCondition[currentPos / 9, currentPos % 9] = 0;
+
+                        //Console.WriteLine("Cleaned " + currentPos);
+
+                        currentDifficulty = NewTrySolve();
+
+                        if (currentDifficulty != targetDifficulty)
+
+                            beginCondition[currentPos / 9, currentPos % 9] = startField[currentPos / 9, currentPos % 9].SolveResult.GetValueOrDefault(0);
+                    }
+
+                    cellsDone.Add(currentPos);
+                }
+            }
+            while (cellsDone.Count < 81);
             
+            NewTrySolve();
+
+            //Вывод сетки на экран
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
                     if (beginCondition[i, j] != 0) mainField[i, j].Text = beginCondition[i, j].ToString();
-
                     else mainField[i, j].Text = "";
                 }
-            }
-            
-            void ChangeRandomMember(byte[,] grid, bool needAdd)
+            }                        
+
+            //Удаление (добавление) рандомного числа из сетки
+            void ChangeRandomLikeMember(byte[,] grid, bool needAdd, out int pos)
             {
                 bool isFounded = false;
 
-                int pos = random.Next(0, 81);
+                pos = random.Next(0, 81);
 
-                Console.WriteLine("rand: {0}   Add: {1}", pos, needAdd);
+                //Console.WriteLine("rand: {0}   Add: {1}", pos, needAdd);
 
                 if (needAdd)
                 {
@@ -360,7 +443,7 @@ namespace JapanGames2
                             if (grid[pos / 9, pos % 9] == 0)
                             {
                                 grid[pos / 9, pos % 9] = startField[pos / 9, pos % 9].SolveResult.GetValueOrDefault(0);
-
+                                
                                 isFounded = true;
                             }
                         }
@@ -514,15 +597,14 @@ namespace JapanGames2
             mySudokuGrid = new MySudokuGrid(beginCondition);
 
             mySudokuGrid.MethodWorkedWithProgress += OnMethodHadWorked;
-
+            /*
             debugLabel.Text += "(" + mySudokuGrid.TrySolve().ToString() + ")";
-
+            
             debugLabel2.Text = tableWorkedMethods[1] + "|" + tableWorkedMethods[2] + "|" +
-                               tableWorkedMethods[3] + "|" + tableWorkedMethods[4] + "|" + 
-                               tableWorkedMethods[5] + "|" + tableWorkedMethods[6];
+                               tableWorkedMethods[3] + "|" + tableWorkedMethods[4];
 
             debugLabel3.Text = "Fault?:" + mySudokuGrid.CheckGridForFault();
-
+            */
         }
     }
 }

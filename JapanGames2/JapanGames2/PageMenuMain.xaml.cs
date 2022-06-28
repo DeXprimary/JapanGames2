@@ -54,7 +54,8 @@ namespace JapanGames2
 
         public PageMainMenu()
         {
-            InitializeComponent();                       
+            InitializeComponent();
+
         }
     }
 }
