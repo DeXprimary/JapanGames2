@@ -59,16 +59,18 @@ namespace JapanGames2
 
             var mySudokuGridBuilder = new MySudokuGridBuilder();
 
+            await Task.Run(() => mySudokuGridBuilder.BuildNewGame(difficulty, cancelToken), cancelToken);
+            
+            /*
             try
             {
                 await Task.Run(() => mySudokuGridBuilder.BuildNewGame(difficulty, cancelToken), cancelToken);
             }
             catch (Exception ex)
-            {
-                
-
-                Console.WriteLine(ex.ToString());
+            {              
+                Console.WriteLine(ex.Message);
             }            
+            */
 
             mySudokuGridBuilder.Builded.Invoke(mySudokuGridBuilder, null);
 

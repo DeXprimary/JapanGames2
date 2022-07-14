@@ -48,7 +48,7 @@ namespace JapanGames2
             VeryHard = 5,
             Insane = 6
         }
-        /*
+        
         byte[,] beginCondition =
         {   { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
             { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -60,19 +60,19 @@ namespace JapanGames2
             { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
             { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
         };
-        */
+        /*
         byte[,] beginCondition =
-        {   { 0, 7, 0, 0, 3, 0, 0, 5, 0 },
-            { 0, 0, 0, 0, 0, 0, 7, 0, 0 },
-            { 0, 3, 0, 0, 0, 4, 0, 0, 1 },
-            { 0, 4, 0, 0, 0, 1, 9, 0, 2 },
-            { 0, 0, 6, 0, 4, 0, 0, 0, 5 },
-            { 8, 0, 0, 0, 5, 6, 0, 0, 0 },
-            { 0, 1, 0, 0, 0, 0, 0, 0, 6 },
-            { 0, 0, 0, 0, 0, 5, 0, 0, 4 },
-            { 2, 0, 0, 0, 8, 0, 0, 0, 0 }
+        {   { 9, 2, 0, 0, 3, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 8, 3, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0, 7 },
+            { 0, 0, 8, 7, 0, 6, 5, 0, 0 },
+            { 2, 4, 3, 0, 0, 0, 0, 0, 0 },
+            { 0, 0, 0, 0, 0, 0, 0, 0, 8 },
+            { 0, 0, 0, 2, 5, 0, 6, 0, 0 },
+            { 7, 0, 4, 8, 0, 0, 3, 0, 0 },
+            { 0, 0, 0, 0, 0, 1, 0, 7, 0 }
         };               
-
+        */
         Random random = new Random();
 
         Label_Coords[,] mainField = new Label_Coords[9, 9];
@@ -164,16 +164,35 @@ namespace JapanGames2
 
         async void OnClickedButtonClear(object sender, EventArgs args)
         {
+            var button = sender as Button;
+
+            button.IsEnabled = false;
+
             if (await DisplayAlert("CLEAR", "Really clear field?", "Clear now!", "Cancel"))
             {
-                for (int i = 0; i < 9; i++)
+                button.IsEnabled = true;
+
+                ResetGrid();
+            }
+        }
+
+        void ResetGrid()
+        {
+            for (int i = 0; i < 9; i++)
+            {
+                for (int j = 0; j < 9; j++)
                 {
-                    for (int j = 0; j < 9; j++)
+                    if (beginCondition[i, j] != 0)
                     {
-                        if (beginCondition[i, j] != 0)
-                            mainField[i, j].Text = beginCondition[i, j].ToString();
-                        else
-                            mainField[i, j].Text = "";
+                        mainField[i, j].Text = beginCondition[i, j].ToString();
+
+                        mainField[i, j].TextColor = (Color)Application.Current.Resources["Color_MenuText"];
+                    }
+                    else
+                    {
+                        mainField[i, j].Text = "";
+
+                        mainField[i, j].TextColor = (Color)Application.Current.Resources["Color_ValidText"];
                     }
                 }
             }
@@ -239,32 +258,71 @@ namespace JapanGames2
             }
         }
 
-        void OnClickedButtonNewGame(object sender, EventArgs args)
+        async void OnClickedButtonNewGame(object sender, EventArgs args)
         {
-            if (cancelTokenSourse != null) 
+            byte difficulty;
 
-                cancelTokenSourse.Cancel();
+            Button button = sender as Button;
+
+            button.IsEnabled = false;
+
+            switch (await DisplayActionSheet("Difficulty", "Cancel", null, "Easy", "Normal", "Hard", "Insane"))
+            {
+                case "Easy": difficulty = 1; break;
+
+                case "Normal": difficulty = 2; break;
+
+                case "Hard": difficulty = 3; break;
+
+                case "Insane": difficulty = 4; break;
+
+                default: difficulty = 0; break;
+            }
+
+            if (difficulty != 0)
+            {
+                await Navigation.PushAsync(new PageSudoku(difficulty), true);
+
+                Navigation.RemovePage(Navigation.NavigationStack[1]);
+            }
+
+            foreach (var k in Application.Current.MainPage.Navigation.NavigationStack)
+            {
+                string str = ""; 
+
+                str += k.Id + Environment.NewLine;
+
+                Console.WriteLine(k.Id);
+
+                debugLabel2.Text = str;
+            }
+
+            
+
+            button.IsEnabled = true;
         }                    
 
         void OnBuilded(object sender, EventArgs args)
         {
-            if (cancelTokenSourse != null)
-
-                cancelTokenSourse.Cancel();
+            if (!cancelTokenSourse.IsCancellationRequested) cancelTokenSourse.Cancel();
 
             var grid = sender as MySudokuGridBuilder;
 
-            //Вывод сетки на экран
+            mySudokuGrid = grid;
+
+            //Заполняем сетку
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
                     if (grid.NewGameCondition[i, j] != 0)
-                        mainField[i, j].Text = grid.NewGameCondition[i, j].ToString();
-                    else 
-                    mainField[i, j].Text = "";
+                        beginCondition[i, j] = grid.NewGameCondition[i, j];
+                    else
+                        beginCondition[i, j] = 0;
                 }
             }
+
+            ResetGrid();
         }
 
         private async void CreateGameAsync(int diff)
@@ -275,8 +333,6 @@ namespace JapanGames2
 
             var tasks = new Task<MySudokuGridBuilder>[Environment.ProcessorCount * 1];
 
-            Console.WriteLine(Environment.ProcessorCount);
-
             try
             {         
                 for (int k = 0; k < tasks.Length; k++)
@@ -284,98 +340,30 @@ namespace JapanGames2
                     tasks[k] = MySudokuGridBuilder.Build((byte)diff, cancelToken);
                 }
 
-                //int indexCompleteTask = Task.WaitAny(tasks);
-
-                var fastestTask = await Task<MySudokuGridBuilder>.WhenAny(tasks);
-
-                Console.WriteLine("Status: " + fastestTask.Status);
-
-                foreach (var k in tasks) { Console.WriteLine("Task Info: " + k.Id + " | " + k.Status); }
-
-                Console.WriteLine("Ex stage 1");
-
-                OnBuilded(await fastestTask, null);
-
-                Console.WriteLine("Ex stage 2");
+                OnBuilded(await await Task<MySudokuGridBuilder>.WhenAny(tasks), null);
             }
             catch (OperationCanceledException ex)
             {
-                Console.WriteLine("Outer Handler Worked When Excepted" + ex.StackTrace);
-            }/*
-            catch (AggregateException aggEx)
-            {
-                Console.WriteLine("Ex stage 3");
-
-                aggEx.Flatten().Handle(ex =>
-                {
-                    string message = ex is OperationCanceledException ? "Task is canceled" : ex.Message;
-                    
-                    Console.WriteLine("Ex message: " + message + " | " + ex.StackTrace);
-
-                    return true;
-                });
-
-                Console.WriteLine("Ex stage 4");
-            }*/
-            /*
-            catch (TaskCanceledException ex)
-            {
-                Console.WriteLine("Ex: OpCanceled - " + ex.Message);
-                Console.WriteLine("Ex: OpCanceled - " + ex.StackTrace);
-                Debug.WriteLine("Ex: OpCanceled - " + ex.Message);
-                Debug.WriteLine("Ex: OpCanceled - " + ex.StackTrace);
+                Console.WriteLine("Outer Handler Worked When Excepted " + Environment.NewLine + ex.StackTrace);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Ex: Other - " + ex.Message);
-            }
-            */
-
             finally
             {
-                //Console.WriteLine("Status: " + tasks[0].Status);
-
                 cancelTokenSourse.Dispose();
             }
-
-            //var temp = MySudokuGridBuilder.Build((byte)diff);
-
-            //Console.WriteLine("Status: " + temp.Status);                        
-
-            //MySudokuGridBuilder startField = await MySudokuGridBuilder.Build((byte)diff);
-
-            //Console.WriteLine("Status: " + temp.Status);
-
-            //OnBuilded(startField, null);
-
-            //var startField = new MySudokuGridBuilder((byte)diff);
-
-            //startField.Builded += OnBuilded;
-
-            //await Task.Run(() => startField.BuildNewGame((byte)diff));
-
-            //startField.BuildNewGame((byte)diff);
-
-            //var startField = MySudokuGridBuilder.Build((byte)diff);
-
-            //startField
         }
 
         public PageSudoku(int targetDifficulty) : this()
-        {          
+        {
+            var page = Application.Current.MainPage as NavigationPage;
+
+            page.Popped += (x, y) => 
+            {
+                if (!cancelTokenSourse.IsCancellationRequested) cancelTokenSourse.Cancel();
+
+                Console.WriteLine("BackSpace Canceled");
+            };
+
             CreateGameAsync(targetDifficulty);
-
-            //MySudokuGridBuilder startField = new MySudokuGridBuilder((byte)targetDifficulty);
-
-            //var startField = MySudokuGridBuilder.Build((byte)targetDifficulty);
-
-            //startField.
-
-            //startField.Builded += OnBuilded;
-
-            //startField.BuildNewGame((byte)targetDifficulty);
-
-                                     
         }
 
         public PageSudoku()
@@ -467,29 +455,11 @@ namespace JapanGames2
 
             gestureTapMainGrid.Tapped += OnTappedMainGrid;
 
-            /*
-            for (int i = 0; i < 9; i++)
-            {
-                for (int j = 0; j < 9; j++)
-                {
-                    if (beginCondition[i, j] != 0) mainField[i, j].Text = beginCondition[i, j].ToString();
-                    else mainField[i, j].Text = "";
-                }
-            }
+            ResetGrid();
 
             mySudokuGrid = new MySudokuGrid(beginCondition);
 
             debugLabel.Text = mySudokuGrid.TrySolve().ToString();
-            */
-
-            /*
-            debugLabel.Text += "(" + mySudokuGrid.TrySolve().ToString() + ")";
-            
-            debugLabel2.Text = tableWorkedMethods[1] + "|" + tableWorkedMethods[2] + "|" +
-                               tableWorkedMethods[3] + "|" + tableWorkedMethods[4];
-
-            debugLabel3.Text = "Fault?:" + mySudokuGrid.CheckGridForFault();
-            */
         }
     }
 }

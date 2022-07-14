@@ -29,10 +29,12 @@ namespace JapanGames2
 
         protected override void OnSleep()
         {
+
         }
 
         protected override void OnResume()
         {
+
         }
     }
 }
