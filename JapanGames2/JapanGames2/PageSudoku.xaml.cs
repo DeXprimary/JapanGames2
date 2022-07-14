@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using Xamarin.Forms;
 
 namespace JapanGames2
 {
     public partial class PageSudoku : ContentPage
-    {
+    {      
         private struct NumActionInfo
         {
             public byte i;
@@ -46,18 +48,6 @@ namespace JapanGames2
             VeryHard = 5,
             Insane = 6
         }
-
-        byte[,] newGameTemplate =
-        {   { 1, 2, 3, 4, 5, 6, 7, 8, 9 },
-            { 4, 5, 6, 7, 8, 9, 1, 2, 3 },
-            { 7, 8, 9, 1, 2, 3, 4, 5, 6 },
-            { 2, 3, 4, 5, 6, 7, 8, 9, 1 },
-            { 5, 6, 7, 8, 9, 1, 2, 3, 4 },
-            { 8, 9, 1, 2, 3, 4, 5, 6, 7 },
-            { 3, 4, 5, 6, 7, 8, 9, 1, 2 },
-            { 6, 7, 8, 9, 1, 2, 3, 4, 5 },
-            { 9, 1, 2, 3, 4, 5, 6, 7, 8 }
-        };
         /*
         byte[,] beginCondition =
         {   { 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -81,9 +71,7 @@ namespace JapanGames2
             { 0, 1, 0, 0, 0, 0, 0, 0, 6 },
             { 0, 0, 0, 0, 0, 5, 0, 0, 4 },
             { 2, 0, 0, 0, 8, 0, 0, 0, 0 }
-        }; 
-        
-        int[] tableWorkedMethods = new int[5] { 0, 0, 0, 0, 0 };
+        };               
 
         Random random = new Random();
 
@@ -101,28 +89,11 @@ namespace JapanGames2
 
         MySudokuGrid mySudokuGrid;
 
+        CancellationTokenSource cancelTokenSourse;
+
         TapGestureRecognizer gestureTapMainGrid = new TapGestureRecognizer();
 
-        TapGestureRecognizer gestureTapNumPad = new TapGestureRecognizer();
-
-
-
-        void OnMethodHadWorked(int methodID)
-        {
-            if (methodID == 3 || methodID == 4 || methodID == 5) tableWorkedMethods[3]++;
-
-            else if (methodID == 6) tableWorkedMethods[4]++; 
-
-            else tableWorkedMethods[methodID]++;
-        }
-
-        void ResetWorkedMetods()
-        {
-            for (int i = 0; i < tableWorkedMethods.Length; i++)
-            {
-                tableWorkedMethods[i] = 0;
-            }
-        }
+        TapGestureRecognizer gestureTapNumPad = new TapGestureRecognizer();        
 
         async void OnClickedButtonSolveIt(object sender, EventArgs args)
         {
@@ -270,230 +241,141 @@ namespace JapanGames2
 
         void OnClickedButtonNewGame(object sender, EventArgs args)
         {
+            if (cancelTokenSourse != null) 
 
-        }        
+                cancelTokenSourse.Cancel();
+        }                    
 
-        int NewTrySolve()
+        void OnBuilded(object sender, EventArgs args)
         {
-            ResetWorkedMetods();
+            if (cancelTokenSourse != null)
 
-            //mySudokuGrid = new MySudokuGrid(beginCondition);
+                cancelTokenSourse.Cancel();
 
-            //mySudokuGrid.MethodWorkedWithProgress += OnMethodHadWorked;
-
-            mySudokuGrid.SetNewGrid(beginCondition);
-
-            int diff = mySudokuGrid.TrySolve();
-            /*
-            foreach (var k in tableWorkedMethods) Console.Write(k.ToString() + " | ");
-
-            Console.WriteLine(" = " + diff);
-
-            debugLabel.Text = "!" + diff + "!" + "/n";
-
-            debugLabel2.Text = tableWorkedMethods[1] + "|" + tableWorkedMethods[2] + "|" +
-                               tableWorkedMethods[3] + "|" + tableWorkedMethods[4];
-
-            debugLabel3.Text = "Fault?:" + mySudokuGrid.CheckGridForFault();
-            */
-            return diff;
-        }
-
-        public PageSudoku(int targetDifficulty) : this()
-        {
-            MySudokuGridBuilder startField = new MySudokuGridBuilder();
-
-            int currentPos;
-
-            List<int> cellsDone = new List<int>();
-            
-            //Вывод в консоль начального поля
-            Console.WriteLine("startField");
-                        
-            for (int i = 0; i < 9; i++)
-            {
-                for (int j = 0; j < 9; j++)
-                {
-                    beginCondition[i, j] = startField[i, j].SolveResult.GetValueOrDefault(0);
-
-                    //Console.Write("{0} ", beginCondition[i, j]);
-                }
-                //Console.WriteLine();
-            }
-            
-            //Подготовка поля для новой игры
-
-            int currentDifficulty = 1;
-            
-            while (currentDifficulty != targetDifficulty)
-            {
-                if (currentDifficulty == 0)
-                {
-                    ChangeRandomLikeMember(beginCondition, true, out int position);
-                }
-                else if (currentDifficulty < targetDifficulty)
-                {
-                    ChangeRandomLikeMember(beginCondition, false, out int position);
-                }
-                else
-                {
-                    if (tableWorkedMethods[targetDifficulty] == 0)
-                    {
-                        ChangeRandomLikeMember(beginCondition, false, out int position);
-                    }
-                    else
-                    {
-                        //Console.WriteLine("Worked " + tableWorkedMethods[targetDifficulty]);
-
-                        cellsDone.Clear();
-
-                        bool isNeedAdd = true;
-
-                        do
-                        {
-                            currentPos = random.Next(0, 81);
-
-                            if (!cellsDone.Contains(currentPos))
-                            {
-                                if (beginCondition[currentPos / 9, currentPos % 9] == 0)
-                                {
-                                    beginCondition[currentPos / 9, currentPos % 9] = startField[currentPos / 9, currentPos % 9].SolveResult.GetValueOrDefault(0);
-
-                                    currentDifficulty = NewTrySolve();
-
-                                    if (currentDifficulty == targetDifficulty) break;
-
-                                    if (tableWorkedMethods[targetDifficulty] == 0) beginCondition[currentPos / 9, currentPos % 9] = 0;
-
-                                    else isNeedAdd = false;
-                                }
-
-                                cellsDone.Add(currentPos);
-                            }
-                        }
-                        while (cellsDone.Count < 81);
-
-                        if (isNeedAdd) ChangeRandomLikeMember(beginCondition, true, out int position);
-
-                        //Console.WriteLine("Done" + tableWorkedMethods[targetDifficulty]);
-                    }
-                }
-
-                currentDifficulty = NewTrySolve();
-            }
-
-            //Чистка поля от ненужных чисел
-            cellsDone.Clear();     
-
-            do
-            {
-                currentPos = random.Next(0, 81);
-
-                if (!cellsDone.Contains(currentPos))
-                {
-                    if (beginCondition[currentPos / 9, currentPos % 9] != 0)
-                    {
-                        beginCondition[currentPos / 9, currentPos % 9] = 0;
-
-                        //Console.WriteLine("Cleaned " + currentPos);
-
-                        currentDifficulty = NewTrySolve();
-
-                        if (currentDifficulty != targetDifficulty)
-
-                            beginCondition[currentPos / 9, currentPos % 9] = startField[currentPos / 9, currentPos % 9].SolveResult.GetValueOrDefault(0);
-                    }
-
-                    cellsDone.Add(currentPos);
-                }
-            }
-            while (cellsDone.Count < 81);
-            
-            NewTrySolve();
+            var grid = sender as MySudokuGridBuilder;
 
             //Вывод сетки на экран
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
                 {
-                    if (beginCondition[i, j] != 0) mainField[i, j].Text = beginCondition[i, j].ToString();
-                    else mainField[i, j].Text = "";
+                    if (grid.NewGameCondition[i, j] != 0)
+                        mainField[i, j].Text = grid.NewGameCondition[i, j].ToString();
+                    else 
+                    mainField[i, j].Text = "";
                 }
-            }                        
-
-            //Удаление (добавление) рандомного числа из сетки
-            void ChangeRandomLikeMember(byte[,] grid, bool needAdd, out int pos)
-            {
-                bool isFounded = false;
-
-                pos = random.Next(0, 81);
-
-                //Console.WriteLine("rand: {0}   Add: {1}", pos, needAdd);
-
-                if (needAdd)
-                {
-                    if (grid[pos / 9, pos % 9] == 0) grid[pos / 9, pos % 9] = startField[pos / 9, pos % 9].SolveResult.GetValueOrDefault(0);
-
-                    else
-
-                        while (!isFounded)
-                        {
-                            if (pos < 80) pos++; else pos = 0;
-
-                            if (grid[pos / 9, pos % 9] == 0)
-                            {
-                                grid[pos / 9, pos % 9] = startField[pos / 9, pos % 9].SolveResult.GetValueOrDefault(0);
-                                
-                                isFounded = true;
-                            }
-                        }
-                }
-                else
-                {
-                    if (grid[pos / 9, pos % 9] != 0) grid[pos / 9, pos % 9] = 0;
-
-                    else
-
-                        while (!isFounded)
-                        {
-                            if (pos < 80) pos++; else pos = 0;
-
-                            if (grid[pos / 9, pos % 9] != 0)
-                            {
-                                grid[pos / 9, pos % 9] = 0;
-
-                                isFounded = true;
-                            }
-                        }
-                }                
             }
+        }
 
+        private async void CreateGameAsync(int diff)
+        {
+            cancelTokenSourse = new CancellationTokenSource();
 
+            var cancelToken = cancelTokenSourse.Token;
 
+            var tasks = new Task<MySudokuGridBuilder>[Environment.ProcessorCount * 1];
 
-            /*
-            mySudokuGrid = new MySudokuGrid(beginCondition);
+            Console.WriteLine(Environment.ProcessorCount);
 
-            debugLabel.Text += "!" + mySudokuGrid.TrySolve().ToString() + "!";
-
-            debugLabel.Text += mySudokuGrid.IsSolved.ToString();
-
-            for (int i = 0; i < 9; i++)
-            {
-                for (int j = 0; j < 9; j++)
+            try
+            {         
+                for (int k = 0; k < tasks.Length; k++)
                 {
-                    if (beginCondition[i, j] != 0)
-                    {
-                        mainField[i, j].Text = beginCondition[i, j].ToString();
-                    }
-                    else
-                    {
-                        mainField[i, j].Text = "";
-                        mainField[i, j].TextColor = (Color)Application.Current.Resources["Color_ValidText"];
-                    } 
+                    tasks[k] = MySudokuGridBuilder.Build((byte)diff, cancelToken);
                 }
+
+                //int indexCompleteTask = Task.WaitAny(tasks);
+
+                var fastestTask = await Task<MySudokuGridBuilder>.WhenAny(tasks);
+
+                Console.WriteLine("Status: " + fastestTask.Status);
+
+                foreach (var k in tasks) { Console.WriteLine("Task Info: " + k.Id + " | " + k.Status); }
+
+                Console.WriteLine("Ex stage 1");
+
+                OnBuilded(await fastestTask, null);
+
+                Console.WriteLine("Ex stage 2");
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine("Outer Handler Worked When Excepted" + ex.StackTrace);
+            }/*
+            catch (AggregateException aggEx)
+            {
+                Console.WriteLine("Ex stage 3");
+
+                aggEx.Flatten().Handle(ex =>
+                {
+                    string message = ex is OperationCanceledException ? "Task is canceled" : ex.Message;
+                    
+                    Console.WriteLine("Ex message: " + message + " | " + ex.StackTrace);
+
+                    return true;
+                });
+
+                Console.WriteLine("Ex stage 4");
+            }*/
+            /*
+            catch (TaskCanceledException ex)
+            {
+                Console.WriteLine("Ex: OpCanceled - " + ex.Message);
+                Console.WriteLine("Ex: OpCanceled - " + ex.StackTrace);
+                Debug.WriteLine("Ex: OpCanceled - " + ex.Message);
+                Debug.WriteLine("Ex: OpCanceled - " + ex.StackTrace);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ex: Other - " + ex.Message);
             }
             */
+
+            finally
+            {
+                //Console.WriteLine("Status: " + tasks[0].Status);
+
+                cancelTokenSourse.Dispose();
+            }
+
+            //var temp = MySudokuGridBuilder.Build((byte)diff);
+
+            //Console.WriteLine("Status: " + temp.Status);                        
+
+            //MySudokuGridBuilder startField = await MySudokuGridBuilder.Build((byte)diff);
+
+            //Console.WriteLine("Status: " + temp.Status);
+
+            //OnBuilded(startField, null);
+
+            //var startField = new MySudokuGridBuilder((byte)diff);
+
+            //startField.Builded += OnBuilded;
+
+            //await Task.Run(() => startField.BuildNewGame((byte)diff));
+
+            //startField.BuildNewGame((byte)diff);
+
+            //var startField = MySudokuGridBuilder.Build((byte)diff);
+
+            //startField
+        }
+
+        public PageSudoku(int targetDifficulty) : this()
+        {          
+            CreateGameAsync(targetDifficulty);
+
+            //MySudokuGridBuilder startField = new MySudokuGridBuilder((byte)targetDifficulty);
+
+            //var startField = MySudokuGridBuilder.Build((byte)targetDifficulty);
+
+            //startField.
+
+            //startField.Builded += OnBuilded;
+
+            //startField.BuildNewGame((byte)targetDifficulty);
+
+                                     
         }
 
         public PageSudoku()
@@ -585,6 +467,7 @@ namespace JapanGames2
 
             gestureTapMainGrid.Tapped += OnTappedMainGrid;
 
+            /*
             for (int i = 0; i < 9; i++)
             {
                 for (int j = 0; j < 9; j++)
@@ -596,7 +479,9 @@ namespace JapanGames2
 
             mySudokuGrid = new MySudokuGrid(beginCondition);
 
-            mySudokuGrid.MethodWorkedWithProgress += OnMethodHadWorked;
+            debugLabel.Text = mySudokuGrid.TrySolve().ToString();
+            */
+
             /*
             debugLabel.Text += "(" + mySudokuGrid.TrySolve().ToString() + ")";
             

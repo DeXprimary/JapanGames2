@@ -66,12 +66,12 @@ namespace JapanGames2
             {
 				for (byte j = 0; j < 9; j++)
                 {
-					mySudokuCells[i, j] = new MySudokuCell(grid[i, j]);
+					mySudokuCells[i, j] = new MySudokuCell(grid != null ? grid[i, j] : (byte?)0);
                 }
             }
 		}
 
-		public void SetNewGrid(byte[,] grid)
+		protected void SetNewGrid(byte[,] grid)
 		{
 			for (byte i = 0; i < 9; i++)
 			{
@@ -86,7 +86,7 @@ namespace JapanGames2
 			myIneffectiveCandidates.Clear();
 		}
 
-		public bool SetValueCell(byte value, byte i, byte j)
+		protected bool SetValueCell(byte value, byte i, byte j)
         {
 			bool resultOperation = false;
 
@@ -99,12 +99,12 @@ namespace JapanGames2
 			return resultOperation;
         }
 
-		public bool CheckGridForFault()
+		protected bool CheckGridForFault()
         {
 			return CheckFaultSolving(mySudokuCells);
         }
 
-		public byte TrySolve() //Возвращает сложность решения головоломки
+		public virtual byte TrySolve(byte tryDifficulty = 4) //Возвращает сложность решения головоломки
         {
 			bool hasProgress = true;		
 			
@@ -116,10 +116,14 @@ namespace JapanGames2
 
 				if (!SolvingProcedure1(mySudokuCells))
                 {
+					if (tryDifficulty == 1) { difficulty = 0; break; }
+
 					if (difficulty < 2) difficulty = 2;
 					
 					if (!SolvingProcedure2(mySudokuCells))
                     {
+						if (tryDifficulty == 2) { difficulty = 0; break; }
+
 						if (difficulty < 3) difficulty = 3;
 						
 						if (!SolvingProcedure3(mySudokuCells))
@@ -132,6 +136,8 @@ namespace JapanGames2
 								
 								if (!SolvingProcedure5(mySudokuCells))
                                 {
+									if (tryDifficulty == 3) { difficulty = 0; break; }
+
 									if (difficulty < 4) difficulty = 4;
 									
 									if (!SolvingProcedureSubstitution(mySudokuCells))

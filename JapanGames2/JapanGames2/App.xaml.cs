@@ -10,7 +10,7 @@ namespace JapanGames2
         public App()
         {
             InitializeComponent();
-             
+            
             MainPage = new NavigationPage(new PageMainMenu())
             {
                 BarTextColor = (Color)Application.Current.Resources["Color_MenuText"],
@@ -18,6 +18,8 @@ namespace JapanGames2
                 BackgroundColor = (Color)Application.Current.Resources["Color_BGFiller"],
                 Padding = new Thickness(0, 0, 0, 0)
             };            
+
+            
         }
 
         protected override void OnStart()
