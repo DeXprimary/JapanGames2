@@ -89,6 +89,10 @@ namespace JapanGames2
 
         MySudokuGrid mySudokuGrid;
 
+        bool _stopTimer = true;
+
+        TimeSpan _currentTimeSpan = TimeSpan.Zero;
+
         CancellationTokenSource cancelTokenSourse;
 
         TapGestureRecognizer gestureTapMainGrid = new TapGestureRecognizer();
@@ -286,19 +290,6 @@ namespace JapanGames2
                 Navigation.RemovePage(Navigation.NavigationStack[1]);
             }
 
-            foreach (var k in Application.Current.MainPage.Navigation.NavigationStack)
-            {
-                string str = ""; 
-
-                str += k.Id + Environment.NewLine;
-
-                Console.WriteLine(k.Id);
-
-                debugLabel2.Text = str;
-            }
-
-            
-
             button.IsEnabled = true;
         }                    
 
@@ -350,20 +341,50 @@ namespace JapanGames2
             {
                 cancelTokenSourse.Dispose();
             }
+
+            StartTimer();
+        }
+
+        void ResetTimer()
+        {
+            _stopTimer = true;
+
+            _currentTimeSpan = TimeSpan.Zero;
+        }
+
+        async void StartTimer()
+        {
+            _stopTimer = false;
+
+            while (!_stopTimer)
+            {
+                _currentTimeSpan += TimeSpan.FromSeconds(1);
+
+                timerLabel.Text = (_currentTimeSpan.Minutes + (_currentTimeSpan.Hours * 60)).ToString() + ":" + _currentTimeSpan.Seconds.ToString();
+
+                await Task.Delay(1000);
+            }            
         }
 
         public PageSudoku(int targetDifficulty) : this()
         {
             var page = Application.Current.MainPage as NavigationPage;
 
-            page.Popped += (x, y) => 
+            page.Popped += (sender, args) =>
             {
                 if (!cancelTokenSourse.IsCancellationRequested) cancelTokenSourse.Cancel();
 
                 Console.WriteLine("BackSpace Canceled");
             };
 
-            CreateGameAsync(targetDifficulty);
+            var app = App.Current as App;
+
+            app.Resumed += (sender, args) => StartTimer();
+
+            app.Sleeped += (sender, args) => _stopTimer = true; 
+
+            CreateGameAsync(targetDifficulty);           
+
         }
 
         public PageSudoku()

@@ -1,8 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:resources="clr-namespace:JapanGames2"
              x:Class="JapanGames2.PageMainMenu"
-             Title="PageMainMenu"
+             Title="PageMainMenu"             
              BackgroundColor="{StaticResource Color_BGFiller}" >
 
     <ContentPage.Content>
@@ -23,7 +24,7 @@
                 JustifyContent="SpaceBetween"
                 Padding="0">
 
-                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonSudoku" Text="Play Sudoku Now"/>
+                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonSudoku" Text="{x:Static resources:ResourceLang.Button_Play_Sudoku_Now}"/>
                 <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonJapCross" Text="Help With Sudoku"/>
                 <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonAbout" Text="About app =D"/>
 

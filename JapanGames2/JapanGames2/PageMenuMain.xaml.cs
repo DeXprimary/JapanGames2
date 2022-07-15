@@ -65,7 +65,7 @@ namespace JapanGames2
         {
             InitializeComponent();
 
-
+            var x = ResourceLang.Button_Play_Sudoku_Now;
         }
     }
 }
