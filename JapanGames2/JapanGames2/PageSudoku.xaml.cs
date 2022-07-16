@@ -101,7 +101,7 @@ namespace JapanGames2
 
         async void OnClickedButtonSolveIt(object sender, EventArgs args)
         {
-            if (await DisplayAlert("SOLVE IT", "Really solve it?", "Solve now!", "Cancel"))
+            if (await DisplayAlert(ResourceLang.Alert_SOLVING, ResourceLang.Alert_Really_Solve_It_, ResourceLang.Alert_Solve_Now_, ResourceLang.Common_Cancel))
             {
                 for (int i = 0; i < 9; i++)
                 {
@@ -172,7 +172,7 @@ namespace JapanGames2
 
             button.IsEnabled = false;
 
-            if (await DisplayAlert("CLEAR", "Really clear field?", "Clear now!", "Cancel"))
+            if (await DisplayAlert(ResourceLang.Alert_CLEARING, ResourceLang.Alert_Really_Clear_Field_, ResourceLang.Alert_Clear_Now_, ResourceLang.Common_Cancel))
             {
                 button.IsEnabled = true;
 
@@ -270,7 +270,23 @@ namespace JapanGames2
 
             button.IsEnabled = false;
 
-            switch (await DisplayActionSheet("Difficulty", "Cancel", null, "Easy", "Normal", "Hard", "Insane"))
+            string resultOfChoice = await DisplayActionSheet(
+                ResourceLang.ActionSheet_Difficulty, ResourceLang.Common_Cancel, null,
+                ResourceLang.ActionSheet_Easy, ResourceLang.ActionSheet_Normal,
+                ResourceLang.ActionSheet_Hard, ResourceLang.ActionSheet_Insane);
+
+            if (resultOfChoice == ResourceLang.ActionSheet_Easy) difficulty = 1;
+
+            else if (resultOfChoice == ResourceLang.ActionSheet_Normal) difficulty = 2;
+
+            else if (resultOfChoice == ResourceLang.ActionSheet_Hard) difficulty = 3;
+
+            else if (resultOfChoice == ResourceLang.ActionSheet_Insane) difficulty = 4;
+
+            else difficulty = 0;
+
+            /*
+            switch (await DisplayActionSheet())
             {
                 case "Easy": difficulty = 1; break;
 
@@ -282,6 +298,7 @@ namespace JapanGames2
 
                 default: difficulty = 0; break;
             }
+            */
 
             if (difficulty != 0)
             {

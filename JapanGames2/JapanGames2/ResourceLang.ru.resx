@@ -117,16 +117,108 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Button_About" xml:space="preserve">
+  <data name="AboutPage_Label_About_Info" xml:space="preserve">
+    <value>Это моя первая программа, прошу отнестись с пониманием -)</value>
+    <comment>AboutPage</comment>
+  </data>
+  <data name="ActionSheet_Difficulty" xml:space="preserve">
+    <value>Сложность</value>
+    <comment>ActionSheet</comment>
+  </data>
+  <data name="ActionSheet_Easy" xml:space="preserve">
+    <value>Легко</value>
+    <comment>ActionSheet</comment>
+  </data>
+  <data name="ActionSheet_Hard" xml:space="preserve">
+    <value>Сложно</value>
+    <comment>ActionSheet</comment>
+  </data>
+  <data name="ActionSheet_Insane" xml:space="preserve">
+    <value>Безумие</value>
+    <comment>ActionSheet</comment>
+  </data>
+  <data name="ActionSheet_Normal" xml:space="preserve">
+    <value>Нормально</value>
+    <comment>ActionSheet</comment>
+  </data>
+  <data name="Alert_CLEARING" xml:space="preserve">
+    <value>ОЧИСТКА</value>
+    <comment>Alert</comment>
+  </data>
+  <data name="Alert_Clear_Now!" xml:space="preserve">
+    <value>Да, очистить!</value>
+    <comment>Alert</comment>
+  </data>
+  <data name="Alert_Really_Clear_Field?" xml:space="preserve">
+    <value>Правда очистить?</value>
+    <comment>Alert</comment>
+  </data>
+  <data name="Alert_Really_Solve_It?" xml:space="preserve">
+    <value>Правда решить?</value>
+    <comment>Alert</comment>
+  </data>
+  <data name="Alert_Solve_Now!" xml:space="preserve">
+    <value>Да, решить!</value>
+    <comment>Alert</comment>
+  </data>
+  <data name="Alert_SOLVING" xml:space="preserve">
+    <value>РЕШЕНИЕ</value>
+    <comment>Alert</comment>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Отмена</value>
+    <comment>Common</comment>
+  </data>
+  <data name="Common_OK" xml:space="preserve">
+    <value>OK</value>
+    <comment>Common</comment>
+  </data>
+  <data name="MainMenuPage_Button_About" xml:space="preserve">
     <value>О программе</value>
     <comment>MainMenuPage</comment>
   </data>
-  <data name="Button_Help_With_Other_Sudoku" xml:space="preserve">
-    <value>Помощь с другим судоку</value>
+  <data name="MainMenuPage_Button_Help_With_Other_Sudoku" xml:space="preserve">
+    <value>Помощь со сторонним судоку</value>
     <comment>MainMenuPage</comment>
   </data>
-  <data name="Button_Play_Sudoku_Now" xml:space="preserve">
+  <data name="MainMenuPage_Button_Play_Sudoku_Now" xml:space="preserve">
     <value>Играть в судоку</value>
     <comment>MainMenuPage</comment>
+  </data>
+  <data name="MainMenuPage_Label_Main_Info" xml:space="preserve">
+    <value>Добро пожаловать в приложение JapanGames!</value>
+    <comment>MainMenuPage</comment>
+  </data>
+  <data name="NavigationPage_Name_MainMenuPage" xml:space="preserve">
+    <value>Главное меню</value>
+    <comment>NavigationPage</comment>
+  </data>
+  <data name="NavigationPage_Name_SudokuPage" xml:space="preserve">
+    <value>Страница судоку</value>
+    <comment>NavigationPage</comment>
+  </data>
+  <data name="Navigation_Name_AboutPage" xml:space="preserve">
+    <value>О программе</value>
+    <comment>NavigationPage</comment>
+  </data>
+  <data name="SudokuPage_Button_Clear" xml:space="preserve">
+    <value>Отчис.</value>
+    <comment>SudokuPage</comment>
+  </data>
+  <data name="SudokuPage_Button_Erase" xml:space="preserve">
+    <value>Убрать</value>
+    <comment>SudokuPage</comment>
+  </data>
+  <data name="SudokuPage_Button_Hint" xml:space="preserve">
+    <value>Подск.</value>
+    <comment>SudokuPage</comment>
+  </data>
+  <data name="SudokuPage_Button_New_Game" xml:space="preserve">
+    <value>Новая игра</value>
+    <comment>SudokuPage</comment>
+  </data>
+  <data name="SudokuPage_Button_Solve_it" xml:space="preserve">
+    <value>Решить!</value>
+    <comment>SudokuPage</comment>
   </data>
 </root>

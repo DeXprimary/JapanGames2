@@ -117,16 +117,108 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Button_About" xml:space="preserve">
+  <data name="AboutPage_Label_About_Info" xml:space="preserve">
+    <value>That app is my first seriosly programm. Thank you for your attention. =D</value>
+    <comment>AboutPage</comment>
+  </data>
+  <data name="ActionSheet_Difficulty" xml:space="preserve">
+    <value>Difficulty</value>
+    <comment>ActionSheet</comment>
+  </data>
+  <data name="ActionSheet_Easy" xml:space="preserve">
+    <value>Easy</value>
+    <comment>ActionSheet</comment>
+  </data>
+  <data name="ActionSheet_Hard" xml:space="preserve">
+    <value>Hard</value>
+    <comment>ActionSheet</comment>
+  </data>
+  <data name="ActionSheet_Insane" xml:space="preserve">
+    <value>Insane</value>
+    <comment>ActionSheet</comment>
+  </data>
+  <data name="ActionSheet_Normal" xml:space="preserve">
+    <value>Normal</value>
+    <comment>ActionSheet</comment>
+  </data>
+  <data name="Alert_CLEARING" xml:space="preserve">
+    <value>CLEARING</value>
+    <comment>Alert</comment>
+  </data>
+  <data name="Alert_Clear_Now!" xml:space="preserve">
+    <value>Clear now!</value>
+    <comment>Alert</comment>
+  </data>
+  <data name="Alert_Really_Clear_Field?" xml:space="preserve">
+    <value>Really clear field</value>
+    <comment>Alert</comment>
+  </data>
+  <data name="Alert_Really_Solve_It?" xml:space="preserve">
+    <value>Really solve it?</value>
+    <comment>Alert</comment>
+  </data>
+  <data name="Alert_Solve_Now!" xml:space="preserve">
+    <value>Solve now!</value>
+    <comment>Alert</comment>
+  </data>
+  <data name="Alert_SOLVING" xml:space="preserve">
+    <value>SOLVING</value>
+    <comment>Alert</comment>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Common</comment>
+  </data>
+  <data name="Common_OK" xml:space="preserve">
+    <value>OK</value>
+    <comment>Common</comment>
+  </data>
+  <data name="MainMenuPage_Button_About" xml:space="preserve">
     <value>About</value>
     <comment>MainMenuPage</comment>
   </data>
-  <data name="Button_Help_With_Other_Sudoku" xml:space="preserve">
+  <data name="MainMenuPage_Button_Help_With_Other_Sudoku" xml:space="preserve">
     <value>Help with other sudoku</value>
     <comment>MainMenuPage</comment>
   </data>
-  <data name="Button_Play_Sudoku_Now" xml:space="preserve">
+  <data name="MainMenuPage_Button_Play_Sudoku_Now" xml:space="preserve">
     <value>Play Sudoku Now</value>
     <comment>MainMenuPage</comment>
+  </data>
+  <data name="MainMenuPage_Label_Main_Info" xml:space="preserve">
+    <value>Welcome to JapCross game!</value>
+    <comment>MainMenuPage</comment>
+  </data>
+  <data name="NavigationPage_Name_MainMenuPage" xml:space="preserve">
+    <value>MainMenuPage</value>
+    <comment>NavigationPage</comment>
+  </data>
+  <data name="NavigationPage_Name_SudokuPage" xml:space="preserve">
+    <value>SudokuPage</value>
+    <comment>NavigationPage</comment>
+  </data>
+  <data name="Navigation_Name_AboutPage" xml:space="preserve">
+    <value>AboutPage</value>
+    <comment>NavigationPage</comment>
+  </data>
+  <data name="SudokuPage_Button_Clear" xml:space="preserve">
+    <value>Clear</value>
+    <comment>SudokuPage</comment>
+  </data>
+  <data name="SudokuPage_Button_Erase" xml:space="preserve">
+    <value>Erase</value>
+    <comment>SudokuPage</comment>
+  </data>
+  <data name="SudokuPage_Button_Hint" xml:space="preserve">
+    <value>Hint</value>
+    <comment>SudokuPage</comment>
+  </data>
+  <data name="SudokuPage_Button_New_Game" xml:space="preserve">
+    <value>New game</value>
+    <comment>SudokuPage</comment>
+  </data>
+  <data name="SudokuPage_Button_Solve_it" xml:space="preserve">
+    <value>Solve it</value>
+    <comment>SudokuPage</comment>
   </data>
 </root>

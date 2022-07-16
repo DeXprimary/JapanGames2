@@ -1,19 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:resources="clr-namespace:JapanGames2"
              x:Class="JapanGames2.PageSudoku"
-             Title="PageSudoku"
+             Title="{x:Static resources:ResourceLang.NavigationPage_Name_SudokuPage}"
              BackgroundColor="{StaticResource Color_BGFiller}">
 
     <ScrollView IsEnabled="True">
 
         <StackLayout>
 
-            <Label x:Name="debugLabel3" Text="" />
+            <Label x:Name="debugLabel3" Text="" IsVisible="False"/>
 
-            <Label x:Name="debugLabel2" Text="" />
+            <Label x:Name="debugLabel2" Text="" IsVisible="False"/>
 
-            <Label x:Name="debugLabel" Text="" />
+            <Label x:Name="debugLabel" Text="" IsVisible="False"/>
 
             <FlexLayout
             Direction="Row"
@@ -26,8 +27,26 @@
                 <Button 
                 Style="{StaticResource PageSudoku_Button}" 
                 Clicked="OnClickedButtonNewGame" 
-                Text="New Game" HeightRequest="40" WidthRequest="150"/>
+                Text="{x:Static resources:ResourceLang.SudokuPage_Button_New_Game}" HeightRequest="40" WidthRequest="190"/>
 
+                <Frame 
+                CascadeInputTransparent="False"
+                BackgroundColor="{StaticResource Color_BGFiller}" 
+                BorderColor="{StaticResource Color_MenuText}" 
+                HasShadow="True"  CornerRadius="5" 
+                HeightRequest="40" WidthRequest="80" 
+                Padding="0" Margin="0"
+                >
+
+                    <Label 
+                    Style="{StaticResource PageSudoku_MainGrid}" 
+                    TextColor="{StaticResource Color_MenuText}" 
+                    x:Name="counterLabel" Text="0/81"
+                    Padding="0" Margin="0"
+                    BackgroundColor="Transparent"/>
+
+                </Frame>
+                
                 <Frame 
                 CascadeInputTransparent="False"
                 BackgroundColor="{StaticResource Color_BGFiller}" 
@@ -113,10 +132,10 @@
             Margin="0, 5"
             Padding="0">
 
-                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonClear" Text="Clear" HeightRequest="40" WidthRequest="90"/>
-                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonErase" Text="Erase" HeightRequest="40" WidthRequest="90" x:Name="buttonErase" IsEnabled="False"/>
-                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonHint"  Text="Hint" HeightRequest="40" WidthRequest="80" />
-                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonSolveIt" Text="Solve it" HeightRequest="40" WidthRequest="110"/>
+                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonClear" Text="{x:Static resources:ResourceLang.SudokuPage_Button_Clear}" HeightRequest="40" WidthRequest="90"/>
+                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonErase" Text="{x:Static resources:ResourceLang.SudokuPage_Button_Erase}" HeightRequest="40" WidthRequest="90" x:Name="buttonErase" IsEnabled="False"/>
+                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonHint"  Text="{x:Static resources:ResourceLang.SudokuPage_Button_Hint}" HeightRequest="40" WidthRequest="90" />
+                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonSolveIt" Text="{x:Static resources:ResourceLang.SudokuPage_Button_Solve_it}" HeightRequest="40" WidthRequest="100"/>
 
             </FlexLayout>
 

@@ -3,14 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:resources="clr-namespace:JapanGames2"
              x:Class="JapanGames2.PageMainMenu"
-             Title="PageMainMenu"             
+             Title="{x:Static resources:ResourceLang.NavigationPage_Name_MainMenuPage}"             
              BackgroundColor="{StaticResource Color_BGFiller}" >
 
     <ContentPage.Content>
         <StackLayout>
             <Label 
                 x:Name="welcomeLabel"
-                Text="Welcome to JapCrossApp"
+                Text="{x:Static resources:ResourceLang.MainMenuPage_Label_Main_Info}"
                 VerticalOptions="Center" 
                 HorizontalOptions="CenterAndExpand" 
                 />
@@ -24,9 +24,9 @@
                 JustifyContent="SpaceBetween"
                 Padding="0">
 
-                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonSudoku" Text="{x:Static resources:ResourceLang.Button_Play_Sudoku_Now}"/>
-                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonJapCross" Text="Help With Sudoku"/>
-                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonAbout" Text="About app =D"/>
+                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonSudoku" Text="{x:Static resources:ResourceLang.MainMenuPage_Button_Play_Sudoku_Now}"/>
+                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonJapCross" Text="{x:Static resources:ResourceLang.MainMenuPage_Button_Help_With_Other_Sudoku}"/>
+                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonAbout" Text="{x:Static resources:ResourceLang.MainMenuPage_Button_About}"/>
 
             </FlexLayout>
             

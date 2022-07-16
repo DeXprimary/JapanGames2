@@ -8,9 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace JapanGames2 
-{
-
+namespace JapanGames2 {
     using System;
     
     
@@ -63,29 +61,236 @@ namespace JapanGames2
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на That app is my first seriosly programm. Thank you for your attention. =D.
+        /// </summary>
+        internal static string AboutPage_Label_About_Info {
+            get {
+                return ResourceManager.GetString("AboutPage_Label_About_Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Difficulty.
+        /// </summary>
+        internal static string ActionSheet_Difficulty {
+            get {
+                return ResourceManager.GetString("ActionSheet_Difficulty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Easy.
+        /// </summary>
+        internal static string ActionSheet_Easy {
+            get {
+                return ResourceManager.GetString("ActionSheet_Easy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Hard.
+        /// </summary>
+        internal static string ActionSheet_Hard {
+            get {
+                return ResourceManager.GetString("ActionSheet_Hard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Insane.
+        /// </summary>
+        internal static string ActionSheet_Insane {
+            get {
+                return ResourceManager.GetString("ActionSheet_Insane", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Normal.
+        /// </summary>
+        internal static string ActionSheet_Normal {
+            get {
+                return ResourceManager.GetString("ActionSheet_Normal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Clear now!.
+        /// </summary>
+        internal static string Alert_Clear_Now_ {
+            get {
+                return ResourceManager.GetString("Alert_Clear_Now!", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на CLEARING.
+        /// </summary>
+        internal static string Alert_CLEARING {
+            get {
+                return ResourceManager.GetString("Alert_CLEARING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Really clear field.
+        /// </summary>
+        internal static string Alert_Really_Clear_Field_ {
+            get {
+                return ResourceManager.GetString("Alert_Really_Clear_Field?", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Really solve it?.
+        /// </summary>
+        internal static string Alert_Really_Solve_It_ {
+            get {
+                return ResourceManager.GetString("Alert_Really_Solve_It?", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Solve now!.
+        /// </summary>
+        internal static string Alert_Solve_Now_ {
+            get {
+                return ResourceManager.GetString("Alert_Solve_Now!", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на SOLVING.
+        /// </summary>
+        internal static string Alert_SOLVING {
+            get {
+                return ResourceManager.GetString("Alert_SOLVING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Cancel.
+        /// </summary>
+        internal static string Common_Cancel {
+            get {
+                return ResourceManager.GetString("Common_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на OK.
+        /// </summary>
+        internal static string Common_OK {
+            get {
+                return ResourceManager.GetString("Common_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на About.
         /// </summary>
-        internal static string Button_About {
+        internal static string MainMenuPage_Button_About {
             get {
-                return ResourceManager.GetString("Button_About", resourceCulture);
+                return ResourceManager.GetString("MainMenuPage_Button_About", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Ищет локализованную строку, похожую на Help with other sudoku.
         /// </summary>
-        internal static string Button_Help_With_Other_Sudoku {
+        internal static string MainMenuPage_Button_Help_With_Other_Sudoku {
             get {
-                return ResourceManager.GetString("Button_Help_With_Other_Sudoku", resourceCulture);
+                return ResourceManager.GetString("MainMenuPage_Button_Help_With_Other_Sudoku", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Ищет локализованную строку, похожую на Play Sudoku Now.
         /// </summary>
-        internal static string Button_Play_Sudoku_Now {
+        internal static string MainMenuPage_Button_Play_Sudoku_Now {
             get {
-                return ResourceManager.GetString("Button_Play_Sudoku_Now", resourceCulture);
+                return ResourceManager.GetString("MainMenuPage_Button_Play_Sudoku_Now", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Welcome to JapCross game!.
+        /// </summary>
+        internal static string MainMenuPage_Label_Main_Info {
+            get {
+                return ResourceManager.GetString("MainMenuPage_Label_Main_Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на AboutPage.
+        /// </summary>
+        internal static string Navigation_Name_AboutPage {
+            get {
+                return ResourceManager.GetString("Navigation_Name_AboutPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на MainMenuPage.
+        /// </summary>
+        internal static string NavigationPage_Name_MainMenuPage {
+            get {
+                return ResourceManager.GetString("NavigationPage_Name_MainMenuPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на SudokuPage.
+        /// </summary>
+        internal static string NavigationPage_Name_SudokuPage {
+            get {
+                return ResourceManager.GetString("NavigationPage_Name_SudokuPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Clear.
+        /// </summary>
+        internal static string SudokuPage_Button_Clear {
+            get {
+                return ResourceManager.GetString("SudokuPage_Button_Clear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Erase.
+        /// </summary>
+        internal static string SudokuPage_Button_Erase {
+            get {
+                return ResourceManager.GetString("SudokuPage_Button_Erase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Hint.
+        /// </summary>
+        internal static string SudokuPage_Button_Hint {
+            get {
+                return ResourceManager.GetString("SudokuPage_Button_Hint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на New game.
+        /// </summary>
+        internal static string SudokuPage_Button_New_Game {
+            get {
+                return ResourceManager.GetString("SudokuPage_Button_New_Game", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Solve it.
+        /// </summary>
+        internal static string SudokuPage_Button_Solve_it {
+            get {
+                return ResourceManager.GetString("SudokuPage_Button_Solve_it", resourceCulture);
             }
         }
     }

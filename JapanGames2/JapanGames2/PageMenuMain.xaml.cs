@@ -19,9 +19,27 @@ namespace JapanGames2
 
             button.IsEnabled = false;
 
-            switch (await DisplayActionSheet("Difficulty", "Cancel", null, "Easy", "Normal", "Hard", "Insane"))
+            string resultOfChoice = await DisplayActionSheet(
+                ResourceLang.ActionSheet_Difficulty, ResourceLang.Common_Cancel, null,
+                ResourceLang.ActionSheet_Easy, ResourceLang.ActionSheet_Normal,
+                ResourceLang.ActionSheet_Hard, ResourceLang.ActionSheet_Insane);
+
+            if (resultOfChoice == ResourceLang.ActionSheet_Easy) difficulty = 1;
+
+            else if (resultOfChoice == ResourceLang.ActionSheet_Normal) difficulty = 2;
+
+            else if (resultOfChoice == ResourceLang.ActionSheet_Hard) difficulty = 3;
+
+            else if (resultOfChoice == ResourceLang.ActionSheet_Insane) difficulty = 4;
+
+            else difficulty = 0;
+
+            /*
+            switch (await DisplayActionSheet(ResourceLang.ActionSheet_Difficulty, ResourceLang.Common_Cancel, null, 
+                ResourceLang.ActionSheet_Easy, ResourceLang.ActionSheet_Normal,
+                ResourceLang.ActionSheet_Hard, ResourceLang.ActionSheet_Insane))
             {
-                case "Easy":    difficulty = 1; break;
+                case ResourceLang.ActionSheet_Easy:    difficulty = 1; break;
 
                 case "Normal":  difficulty = 2; break;
 
@@ -31,6 +49,7 @@ namespace JapanGames2
 
                 default:        difficulty = 0; break;
             }            
+            */
 
             if (difficulty != 0) 
 
@@ -65,7 +84,7 @@ namespace JapanGames2
         {
             InitializeComponent();
 
-            var x = ResourceLang.Button_Play_Sudoku_Now;
+            var x = ResourceLang.MainMenuPage_Button_Play_Sudoku_Now;
         }
     }
 }
