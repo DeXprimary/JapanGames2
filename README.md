@@ -1,4 +1,4 @@
-JapanGames2
+#JapanGames2
 
 Кросс-платформенная (Andriod, iOS, UWP) мини игра в судоку.
 
