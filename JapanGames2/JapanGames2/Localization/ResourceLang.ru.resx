@@ -178,7 +178,7 @@
     <comment>MainMenuPage</comment>
   </data>
   <data name="MainMenuPage_Button_Help_With_Other_Sudoku" xml:space="preserve">
-    <value>Помощь со сторонним судоку</value>
+    <value>Решить другой судоку</value>
     <comment>MainMenuPage</comment>
   </data>
   <data name="MainMenuPage_Button_Play_Sudoku_Now" xml:space="preserve">

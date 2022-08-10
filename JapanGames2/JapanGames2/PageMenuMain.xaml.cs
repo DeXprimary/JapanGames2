@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using JapanGames2.Localization;
 
 namespace JapanGames2
 {
@@ -84,7 +86,30 @@ namespace JapanGames2
         {
             InitializeComponent();
 
-            var x = ResourceLang.MainMenuPage_Button_Play_Sudoku_Now;
+            langPicker.Title = CultureInfo.CurrentUICulture.ToString();
+
+            //ResourceLang.ResourceManager.
+
+            
+
+            langPicker.ItemsSource = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+
+            var temp = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+
+            var index = 5;
+
+            welcomeLabel.Text =
+                temp[index].DisplayName + Environment.NewLine +
+                temp[index].EnglishName + Environment.NewLine +
+                temp[index].IetfLanguageTag + Environment.NewLine +
+                temp[index].LCID + Environment.NewLine +
+                temp[index].Name + Environment.NewLine +
+                temp[index].NativeName + Environment.NewLine +
+                temp[index].TextInfo + Environment.NewLine +
+                temp[index].ThreeLetterISOLanguageName + Environment.NewLine +
+                temp[index].ThreeLetterWindowsLanguageName + Environment.NewLine +
+                temp[index].TwoLetterISOLanguageName + Environment.NewLine;
+                //CultureInfo.GetCultureInfo("Russian").NativeName + CultureInfo.GetCultureInfo("Russian").LCID;
         }
     }
 }

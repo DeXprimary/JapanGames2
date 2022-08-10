@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Xamarin.Forms;
+using JapanGames2.Localization;
 
 namespace JapanGames2
 {

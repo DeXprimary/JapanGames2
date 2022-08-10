@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace JapanGames2 {
+namespace JapanGames2.Localization {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace JapanGames2 {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("JapanGames2.ResourceLang", typeof(ResourceLang).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("JapanGames2.Localization.ResourceLang", typeof(ResourceLang).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -196,7 +196,7 @@ namespace JapanGames2 {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Help with other sudoku.
+        ///   Ищет локализованную строку, похожую на Solve Other Sudoku.
         /// </summary>
         internal static string MainMenuPage_Button_Help_With_Other_Sudoku {
             get {
@@ -205,7 +205,7 @@ namespace JapanGames2 {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Play Sudoku Now.
+        ///   Ищет локализованную строку, похожую на Play Sudoku.
         /// </summary>
         internal static string MainMenuPage_Button_Play_Sudoku_Now {
             get {

@@ -35,9 +35,9 @@
 
                 <Setter Property="Margin" Value="10" />
 
-                <Setter Property="Padding" Value="0" />
-
-                <Setter Property="FontSize" Value="Title" />
+                <Setter Property="Padding" Value="0" />                
+                
+                <Setter Property="FontSize" Value="24"/>
 
             </Style>
 
@@ -55,7 +55,7 @@
 
                 <Setter Property="Padding" Value="0" />
 
-                <Setter Property="FontSize" Value="Large" />
+                <Setter Property="FontSize" Value="20" />
 
             </Style>
 

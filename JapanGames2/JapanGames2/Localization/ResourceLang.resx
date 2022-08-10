@@ -178,11 +178,11 @@
     <comment>MainMenuPage</comment>
   </data>
   <data name="MainMenuPage_Button_Help_With_Other_Sudoku" xml:space="preserve">
-    <value>Help with other sudoku</value>
+    <value>Solve Other Sudoku</value>
     <comment>MainMenuPage</comment>
   </data>
   <data name="MainMenuPage_Button_Play_Sudoku_Now" xml:space="preserve">
-    <value>Play Sudoku Now</value>
+    <value>Play Sudoku</value>
     <comment>MainMenuPage</comment>
   </data>
   <data name="MainMenuPage_Label_Main_Info" xml:space="preserve">

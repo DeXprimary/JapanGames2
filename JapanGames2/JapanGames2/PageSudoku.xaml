@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:resources="clr-namespace:JapanGames2"
+             xmlns:resources="clr-namespace:JapanGames2.Localization"
              x:Class="JapanGames2.PageSudoku"
              Title="{x:Static resources:ResourceLang.NavigationPage_Name_SudokuPage}"
              BackgroundColor="{StaticResource Color_BGFiller}">
@@ -25,9 +25,10 @@
             >
 
                 <Button 
-                Style="{StaticResource PageSudoku_Button}" 
-                Clicked="OnClickedButtonNewGame" 
-                Text="{x:Static resources:ResourceLang.SudokuPage_Button_New_Game}" HeightRequest="40" WidthRequest="190"/>
+                    TextTransform="Uppercase"
+                    Style="{StaticResource PageSudoku_Button}" 
+                    Clicked="OnClickedButtonNewGame" 
+                    Text="{x:Static resources:ResourceLang.SudokuPage_Button_New_Game}" HeightRequest="40" WidthRequest="190"/>
 
                 <Frame 
                 CascadeInputTransparent="False"
@@ -132,10 +133,10 @@
             Margin="0, 5"
             Padding="0">
 
-                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonClear" Text="{x:Static resources:ResourceLang.SudokuPage_Button_Clear}" HeightRequest="40" WidthRequest="90"/>
-                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonErase" Text="{x:Static resources:ResourceLang.SudokuPage_Button_Erase}" HeightRequest="40" WidthRequest="90" x:Name="buttonErase" IsEnabled="False"/>
-                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonHint"  Text="{x:Static resources:ResourceLang.SudokuPage_Button_Hint}" HeightRequest="40" WidthRequest="90" />
-                <Button Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonSolveIt" Text="{x:Static resources:ResourceLang.SudokuPage_Button_Solve_it}" HeightRequest="40" WidthRequest="100"/>
+                <Button TextTransform="Uppercase" Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonClear" Text="{x:Static resources:ResourceLang.SudokuPage_Button_Clear}" HeightRequest="40" WidthRequest="90"/>
+                <Button TextTransform="Uppercase" Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonErase" Text="{x:Static resources:ResourceLang.SudokuPage_Button_Erase}" HeightRequest="40" WidthRequest="90" x:Name="buttonErase" IsEnabled="False"/>
+                <Button TextTransform="Uppercase" Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonHint"  Text="{x:Static resources:ResourceLang.SudokuPage_Button_Hint}" HeightRequest="40" WidthRequest="90" />
+                <Button TextTransform="Uppercase" Style="{StaticResource PageSudoku_Button}" Clicked="OnClickedButtonSolveIt" Text="{x:Static resources:ResourceLang.SudokuPage_Button_Solve_it}" HeightRequest="40" WidthRequest="100"/>
 
             </FlexLayout>
 

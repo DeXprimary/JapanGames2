@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:resources="clr-namespace:JapanGames2"
+             xmlns:resources="clr-namespace:JapanGames2.Localization"
              x:Class="JapanGames2.PageMainMenu"
              Title="{x:Static resources:ResourceLang.NavigationPage_Name_MainMenuPage}"             
              BackgroundColor="{StaticResource Color_BGFiller}" >
@@ -24,9 +24,38 @@
                 JustifyContent="SpaceBetween"
                 Padding="0">
 
-                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonSudoku" Text="{x:Static resources:ResourceLang.MainMenuPage_Button_Play_Sudoku_Now}"/>
-                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonJapCross" Text="{x:Static resources:ResourceLang.MainMenuPage_Button_Help_With_Other_Sudoku}"/>
-                <Button Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonAbout" Text="{x:Static resources:ResourceLang.MainMenuPage_Button_About}"/>
+                <Button>
+                    
+                </Button>
+                
+                <Button TextTransform="Uppercase"  Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonSudoku" Text="{x:Static resources:ResourceLang.MainMenuPage_Button_Play_Sudoku_Now}"/>
+                <Button TextTransform="Uppercase" Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonJapCross" Text="{x:Static resources:ResourceLang.MainMenuPage_Button_Help_With_Other_Sudoku}"/>
+                <Button TextTransform="Uppercase" Style="{StaticResource MainMenu_Button}" Clicked="OnClickedButtonAbout" Text="{x:Static resources:ResourceLang.MainMenuPage_Button_About}"/>
+
+            </FlexLayout>
+
+            <FlexLayout
+                Direction="Row"
+                Margin="20"
+                AlignItems="Center"
+                JustifyContent="Center">
+
+                <Label 
+                    x:Name="langLabel"
+                    FontSize="Medium"
+                    Text="Language: "
+                    VerticalOptions="Center" 
+                    HorizontalOptions="CenterAndExpand"
+                    IsVisible="false"/>
+
+                <Picker
+                    x:Name="langPicker"
+                    Title="en-US"
+                    FontSize="Medium"
+                    WidthRequest="100"
+                    HorizontalTextAlignment="Center">
+                    
+                </Picker>
 
             </FlexLayout>
             
