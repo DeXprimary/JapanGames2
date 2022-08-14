@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -12,7 +14,7 @@ namespace JapanGames2
         public event EventHandler Resumed = delegate { };
 
         public App()
-        {
+        {            
             InitializeComponent();
             
             MainPage = new NavigationPage(new View.MainMenuPage())
@@ -22,6 +24,8 @@ namespace JapanGames2
                 BackgroundColor = (Color)Application.Current.Resources["Color_BGFiller"],
                 Padding = new Thickness(0, 0, 0, 0)
             };
+
+            
         }
 
         protected override void OnStart()

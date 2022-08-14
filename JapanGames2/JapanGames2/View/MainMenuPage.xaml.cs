@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using JapanGames2.Localization;
+using System.Globalization;
+using Xamarin.Essentials;
 
 namespace JapanGames2.View
 {
@@ -14,7 +16,31 @@ namespace JapanGames2.View
     {
         public MainMenuPage()
         {
-            InitializeComponent();            
+            InitializeComponent();
+
+            langPicker.Title = CultureInfo.CurrentUICulture.ToString();
+
+            //ResourceLang.ResourceManager.
+
+            //CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en", "EN");
+            
+            //CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en", "EN");
+
+            langPicker.ItemsSource = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+
+            var temp = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+
+            var index = 7;
+
+            welcomeLabel.Text =
+                DeviceInfo.DeviceType + Environment.NewLine +
+                DeviceInfo.Idiom + Environment.NewLine +
+                DeviceInfo.Manufacturer + Environment.NewLine +
+                DeviceInfo.Model + Environment.NewLine +
+                DeviceInfo.Name + Environment.NewLine +
+                DeviceInfo.Platform + Environment.NewLine +
+                DeviceInfo.Version + Environment.NewLine +
+                DeviceInfo.VersionString + Environment.NewLine;
         }
 
         private async void OnButtonClickedNewGameSudoku(object sender, EventArgs e)
@@ -45,6 +71,11 @@ namespace JapanGames2.View
 
         private async void OnButtonClickedEmptySudoku(object sender, EventArgs e)
         {
+            await Navigation.PopAsync();
+
+            await Navigation.PushAsync(new MainMenuPage());
+
+            /*
             Button button = (Button)sender;
 
             button.IsEnabled = false;            
@@ -52,10 +83,20 @@ namespace JapanGames2.View
             await Navigation.PushAsync(new SudokuPage(), true);
 
             button.IsEnabled = true;
+            */
         }
 
         private async void OnButtonClickedAbout(object sender, EventArgs e)
         {
+            if (Localization.ResourceLang.Culture != CultureInfo.GetCultureInfo("en"))
+
+                Localization.ResourceLang.Culture = CultureInfo.GetCultureInfo("en");
+
+            else Localization.ResourceLang.Culture = CultureInfo.GetCultureInfo("ru");
+
+            
+
+            /*
             Button button = (Button)sender;
 
             button.IsEnabled = false;
@@ -63,6 +104,7 @@ namespace JapanGames2.View
             await Navigation.PushAsync(new AboutPage(), true);
 
             button.IsEnabled = true;
+            */
         }
     }
 }

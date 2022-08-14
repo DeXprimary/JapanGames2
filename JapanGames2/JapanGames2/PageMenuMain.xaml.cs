@@ -90,7 +90,7 @@ namespace JapanGames2
 
             //ResourceLang.ResourceManager.
 
-            
+            //CultureInfo.CurrentUICulture = new CultureInfo("en-EN");
 
             langPicker.ItemsSource = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
 
