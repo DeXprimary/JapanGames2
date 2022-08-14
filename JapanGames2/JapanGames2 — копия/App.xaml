@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="JapanGames2.App">
+    
+    <Application.Resources>
+
+        <ResourceDictionary>
+
+            <Color x:Key="Color_LikeBlack">#404040</Color>
+
+            <Color x:Key="Color_MenuText">#0c297a</Color>
+
+            <Color x:Key="Color_ValidText">#0c7a29</Color>
+
+            <Color x:Key="Color_InvalidText">#7a0c29</Color>
+
+            <Color x:Key="Color_BGFiller">#dce3ee</Color>
+
+            <Color x:Key="Color_BGMarker">#afcfff</Color>
+
+            <Color x:Key="Color_ActiveButton">#7f9fff</Color>
+
+            <Style x:Key="MainMenu_Button" TargetType="Button">
+
+                <Setter Property="BackgroundColor" Value="{StaticResource Key=Color_BGMarker}" />
+
+                <Setter Property="TextColor" Value="{StaticResource Key=Color_MenuText}" />
+
+                <Setter Property="CornerRadius" Value="5"/>
+
+                <Setter Property="HeightRequest" Value="80" />
+
+                <Setter Property="WidthRequest" Value="300" />
+
+                <Setter Property="Margin" Value="10" />
+
+                <Setter Property="Padding" Value="0" />                
+                
+                <Setter Property="FontSize" Value="24"/>
+
+            </Style>
+
+            <Style x:Key="PageSudoku_Button" TargetType="Button">
+
+                <Setter Property="BackgroundColor" Value="{StaticResource Key=Color_BGMarker}" />
+
+                <Setter Property="TextColor" Value="{StaticResource Key=Color_MenuText}" />
+
+                <Setter Property="CornerRadius" Value="5"/>
+
+                <Setter Property="HeightRequest" Value="60" />
+
+                <Setter Property="Margin" Value="0" />
+
+                <Setter Property="Padding" Value="0" />
+
+                <Setter Property="FontSize" Value="20" />
+
+            </Style>
+
+            <Style x:Key="PageSudoku_NumPad" TargetType="Button">
+
+                <Setter Property="BackgroundColor" Value="{StaticResource Key=Color_BGFiller}" />
+
+                <Setter Property="TextColor" Value="{StaticResource Key=Color_MenuText}" />
+
+                <Setter Property="CornerRadius" Value="20"/>
+
+                <Setter Property="Margin" Value="0" />
+
+                <Setter Property="Padding" Value="0" />
+
+                <Setter Property="FontSize" Value="30" />
+
+            </Style>
+
+            <Style x:Key="PageSudoku_MainGrid" TargetType="Label">
+
+                <Setter Property="BackgroundColor" Value="{StaticResource Key=Color_BGFiller}" />
+
+                <Setter Property="TextColor" Value="{StaticResource Key=Color_MenuText}" />
+
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+
+                <Setter Property="Margin" Value="0" />
+
+                <Setter Property="Padding" Value="0" />
+
+                <Setter Property="VerticalTextAlignment" Value="Center" />
+                
+                <Setter Property="FontSize" Value="30" />
+
+            </Style>
+
+        </ResourceDictionary>
+
+    </Application.Resources>
+    
+</Application>

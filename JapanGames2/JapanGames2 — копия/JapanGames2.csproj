@@ -36,15 +36,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ResourceLang.resx</DependentUpon>
     </Compile>
-    <Compile Update="View\MainMenuPage.xaml.cs">
-      <DependentUpon>MainMenuPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="View\AboutPage.xaml.cs">
-      <DependentUpon>AboutPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="View\SudokuPage.xaml.cs">
-      <DependentUpon>SudokuPage.xaml</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -61,15 +52,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ResourceLang.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="View\MainMenuPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="View\AboutPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="View\SudokuPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\" />
+    <Folder Include="View\" />
+    <Folder Include="ViewModel\" />
   </ItemGroup>
 
 </Project>

@@ -15,7 +15,7 @@ namespace JapanGames2
         {
             InitializeComponent();
             
-            MainPage = new NavigationPage(new View.MainMenuPage())
+            MainPage = new NavigationPage(new PageMainMenu())
             {
                 BarTextColor = (Color)Application.Current.Resources["Color_MenuText"],
                 BarBackgroundColor = (Color)Application.Current.Resources["Color_BGFiller"],
