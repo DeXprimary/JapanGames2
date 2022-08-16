@@ -16,31 +16,37 @@ namespace JapanGames2.View
     {
         public MainMenuPage()
         {
+            Localization.ResourceLang.Culture = (CultureInfo)App.Current.Properties["CurrentLanguage"];
+
             InitializeComponent();
 
-            langPicker.Title = CultureInfo.CurrentUICulture.ToString();
-
-            //ResourceLang.ResourceManager.
-
-            //CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en", "EN");
+            langPicker.ItemsSource = Localization.AvailableCultures.cultures
+                .Select(obj => obj.NativeName[0].ToString().ToUpper() + obj.NativeName.Substring(1))
+                .ToList();
             
-            //CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en", "EN");
+            langPicker.SelectedIndexChanged -= OnPickerIndexChanged;
 
-            langPicker.ItemsSource = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+            langPicker.SelectedIndex = Localization.AvailableCultures.cultures
+                .Select((obj, i) => new { culture = obj, index = i })
+                .Where(obj => Localization.ResourceLang.Culture.EnglishName.Contains(obj.culture.EnglishName))
+                .Single().index;
 
-            var temp = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
+            langPicker.SelectedIndexChanged += OnPickerIndexChanged;
+        }
 
-            var index = 7;
+        private void OnPickerIndexChanged(object sender, EventArgs e)
+        {
+            Picker picker = (Picker)sender;
 
-            welcomeLabel.Text =
-                DeviceInfo.DeviceType + Environment.NewLine +
-                DeviceInfo.Idiom + Environment.NewLine +
-                DeviceInfo.Manufacturer + Environment.NewLine +
-                DeviceInfo.Model + Environment.NewLine +
-                DeviceInfo.Name + Environment.NewLine +
-                DeviceInfo.Platform + Environment.NewLine +
-                DeviceInfo.Version + Environment.NewLine +
-                DeviceInfo.VersionString + Environment.NewLine;
+            App.Current.Properties["CurrentLanguage"] = Localization.AvailableCultures.cultures[picker.SelectedIndex];
+
+            App.Current.MainPage = new NavigationPage(new View.MainMenuPage())
+            {
+                BarTextColor = (Color)Application.Current.Resources["Color_MenuText"],
+                BarBackgroundColor = (Color)Application.Current.Resources["Color_BGFiller"],
+                BackgroundColor = (Color)Application.Current.Resources["Color_BGFiller"],
+                Padding = new Thickness(0, 0, 0, 0)
+            };
         }
 
         private async void OnButtonClickedNewGameSudoku(object sender, EventArgs e)
@@ -70,33 +76,18 @@ namespace JapanGames2.View
         }
 
         private async void OnButtonClickedEmptySudoku(object sender, EventArgs e)
-        {
-            await Navigation.PopAsync();
-
-            await Navigation.PushAsync(new MainMenuPage());
-
-            /*
+        {            
             Button button = (Button)sender;
 
             button.IsEnabled = false;            
 
             await Navigation.PushAsync(new SudokuPage(), true);
 
-            button.IsEnabled = true;
-            */
+            button.IsEnabled = true;            
         }
 
         private async void OnButtonClickedAbout(object sender, EventArgs e)
         {
-            if (Localization.ResourceLang.Culture != CultureInfo.GetCultureInfo("en"))
-
-                Localization.ResourceLang.Culture = CultureInfo.GetCultureInfo("en");
-
-            else Localization.ResourceLang.Culture = CultureInfo.GetCultureInfo("ru");
-
-            
-
-            /*
             Button button = (Button)sender;
 
             button.IsEnabled = false;
@@ -104,7 +95,6 @@ namespace JapanGames2.View
             await Navigation.PushAsync(new AboutPage(), true);
 
             button.IsEnabled = true;
-            */
         }
     }
 }

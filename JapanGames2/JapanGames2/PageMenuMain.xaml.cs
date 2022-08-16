@@ -85,7 +85,7 @@ namespace JapanGames2
         public PageMainMenu()
         {
             InitializeComponent();
-
+            /*
             langPicker.Title = CultureInfo.CurrentUICulture.ToString();
 
             //ResourceLang.ResourceManager.
@@ -93,11 +93,11 @@ namespace JapanGames2
             //CultureInfo.CurrentUICulture = new CultureInfo("en-EN");
 
             langPicker.ItemsSource = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
-
+            
             var temp = CultureInfo.GetCultures(CultureTypes.NeutralCultures);
 
             var index = 5;
-
+            
             welcomeLabel.Text =
                 temp[index].DisplayName + Environment.NewLine +
                 temp[index].EnglishName + Environment.NewLine +
@@ -108,7 +108,7 @@ namespace JapanGames2
                 temp[index].TextInfo + Environment.NewLine +
                 temp[index].ThreeLetterISOLanguageName + Environment.NewLine +
                 temp[index].ThreeLetterWindowsLanguageName + Environment.NewLine +
-                temp[index].TwoLetterISOLanguageName + Environment.NewLine;
+                temp[index].TwoLetterISOLanguageName + Environment.NewLine;*/
                 //CultureInfo.GetCultureInfo("Russian").NativeName + CultureInfo.GetCultureInfo("Russian").LCID;
         }
     }

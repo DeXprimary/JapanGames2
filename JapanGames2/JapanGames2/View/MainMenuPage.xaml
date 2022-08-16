@@ -5,7 +5,7 @@
              xmlns:resources="clr-namespace:JapanGames2.Localization"
              x:Class="JapanGames2.View.MainMenuPage"
              >
-
+    
     <ContentPage.BindingContext>
 
         <viewModels:MainMenuViewModel/>
@@ -16,8 +16,6 @@
         <StackLayout>
 
             <Label Text="{Binding SomeString}" />
-
-            <Label Text="{Binding WelcomeString}" />
 
             <Label 
                 x:Name="welcomeLabel"
@@ -57,9 +55,10 @@
 
                 <Picker
                     x:Name="langPicker"
-                    Title="en-US"
+                    SelectedIndexChanged="OnPickerIndexChanged"
+                    
                     FontSize="Medium"
-                    WidthRequest="100"
+                    WidthRequest="200"
                     HorizontalTextAlignment="Center">
 
                 </Picker>

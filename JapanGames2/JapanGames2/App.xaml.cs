@@ -14,7 +14,13 @@ namespace JapanGames2
         public event EventHandler Resumed = delegate { };
 
         public App()
-        {            
+        {
+            if (!App.Current.Properties.ContainsKey("CurrentLanguage")) 
+                
+                App.Current.Properties.Add("CurrentLanguage", DependencyService.Get<Interfaces.ILocalizationDetector>().GetCurrentCultureInfo());
+
+            Localization.ResourceLang.Culture = (CultureInfo)App.Current.Properties["CurrentLanguage"];
+                       
             InitializeComponent();
             
             MainPage = new NavigationPage(new View.MainMenuPage())
@@ -23,9 +29,7 @@ namespace JapanGames2
                 BarBackgroundColor = (Color)Application.Current.Resources["Color_BGFiller"],
                 BackgroundColor = (Color)Application.Current.Resources["Color_BGFiller"],
                 Padding = new Thickness(0, 0, 0, 0)
-            };
-
-            
+            };           
         }
 
         protected override void OnStart()
