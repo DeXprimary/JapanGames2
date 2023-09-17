@@ -11,30 +11,12 @@ namespace JapanGames2
 		{
 			get => countAvailableCandidates;
 		}
-
 		private byte[] availableCandidates = new byte[9] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-		/*
-		// Судя по всему при обращении к элементу массива Сеттер не задействовался
-		// Решил реализовать геттер и сеттер через методы
-		public byte[] AvailableCandidates
-		{ 
-			get => availableCandidates;
-
-			set 
-			{
-					availableCandidates = value;
-					RefreshCountAvailableCandidates();
-			} 
-		}
-		*/
-
+		
 		private byte? solveResult = null;
 		public byte? SolveResult
 		{
 			get => solveResult;
-
-			// Пока отдельно не выделил поле solveResult логер андройда кидал почему-то:
-			// [libc] Fatal signal 11 (SIGSEGV), code 2 (SEGV_ACCERR), fault addr 0x7ffee4938ff0 in tid 18384 (ame.japangames2), pid 18384 (ame.japangames2)
 
 			set
 			{
